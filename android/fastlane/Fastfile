@@ -1,0 +1,42 @@
+# Fastfile for Android deployment
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+
+default_platform(:android)
+
+platform :android do
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Submit a new Beta Build to Play Console"
+  lane :beta do
+    gradle(task: "bundle")
+    upload_to_play_store(
+      track: 'internal',
+      release_status: 'draft',
+      aab: '../build/app/outputs/bundle/release/app-release.aab'
+    )
+  end
+
+  desc "Submit a new Production Build to Play Console"
+  lane :production do
+    gradle(task: "bundle")
+    upload_to_play_store(
+      track: 'production',
+      release_status: 'draft',
+      aab: '../build/app/outputs/bundle/release/app-release.aab'
+    )
+  end
+
+  desc "Build debug APK"
+  lane :build_debug do
+    gradle(task: "assembleDebug")
+  end
+
+  desc "Build release APK"
+  lane :build_release do
+    gradle(task: "assembleRelease")
+  end
+end

@@ -1,0 +1,49 @@
+# Local environment file
+.env
+
+# Build artifacts
+build/
+.dart_tool/
+.packages
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Generated files
+*.g.dart
+*.freezed.dart
+/lib/generated/
+
+# Coverage
+coverage/
+
+# iOS
+ios/Flutter/flutter_export_environment.sh
+ios/Runner/GoogleService-Info.plist
+
+# Android
+android/app/google-services.json
+android/key.properties
+android/app/upload-keystore.jks
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Firebase
+firebase_options.dart

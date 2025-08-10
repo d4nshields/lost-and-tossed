@@ -1,0 +1,63 @@
+name: lost_and_tossed
+description: "A playful community field guide for documenting found, discarded, or posted public objects"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management & Navigation
+  flutter_riverpod: ^2.4.9
+  go_router: ^12.1.3
+  
+  # Backend & Database
+  supabase_flutter: ^2.3.4
+  flutter_dotenv: ^5.1.0
+  
+  # Location & Mapping
+  geolocator: ^10.1.0
+  dart_geohash: ^2.1.0
+  
+  # ML Kit & Image Processing
+  google_mlkit_face_detection: ^0.13.1
+  google_mlkit_text_recognition: ^0.15.0
+  image: ^4.1.3
+  
+  # Data Classes & Serialization
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
+  
+  # Internationalization
+  flutter_localizations:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  
+  # Code Generation
+  build_runner: ^2.4.7
+  freezed: ^2.4.6
+  json_serializable: ^6.7.1
+  
+  # Testing
+  mocktail: ^1.0.2
+  golden_toolkit: ^0.15.0
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  generate: true
+  
+  assets:
+    - assets/images/
+    - .env
+
+flutter_intl:
+  enabled: true
