@@ -12,7 +12,7 @@ class CaptureScreen extends ConsumerStatefulWidget {
 }
 
 class _CaptureScreenState extends ConsumerState<CaptureScreen> {
-  LostItemCategory _selectedCategory = const LostItemCategory.lost();
+  LostItemCategory _selectedCategory = LostItemCategory.lost;
 
   @override
   Widget build(BuildContext context) {
@@ -96,46 +96,46 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
             
             // Category cards
             _CategorySelectionCard(
-              category: const LostItemCategory.lost(),
-              isSelected: _selectedCategory == const LostItemCategory.lost(),
+              category: LostItemCategory.lost,
+              isSelected: _selectedCategory == LostItemCategory.lost,
               onTap: () => setState(() {
-                _selectedCategory = const LostItemCategory.lost();
+                _selectedCategory = LostItemCategory.lost;
               }),
             ),
             const SizedBox(height: 12),
             
             _CategorySelectionCard(
-              category: const LostItemCategory.tossed(),
-              isSelected: _selectedCategory == const LostItemCategory.tossed(),
+              category: LostItemCategory.tossed,
+              isSelected: _selectedCategory == LostItemCategory.tossed,
               onTap: () => setState(() {
-                _selectedCategory = const LostItemCategory.tossed();
+                _selectedCategory = LostItemCategory.tossed;
               }),
             ),
             const SizedBox(height: 12),
             
             _CategorySelectionCard(
-              category: const LostItemCategory.posted(),
-              isSelected: _selectedCategory == const LostItemCategory.posted(),
+              category: LostItemCategory.posted,
+              isSelected: _selectedCategory == LostItemCategory.posted,
               onTap: () => setState(() {
-                _selectedCategory = const LostItemCategory.posted();
+                _selectedCategory = LostItemCategory.posted;
               }),
             ),
             const SizedBox(height: 12),
             
             _CategorySelectionCard(
-              category: const LostItemCategory.marked(),
-              isSelected: _selectedCategory == const LostItemCategory.marked(),
+              category: LostItemCategory.marked,
+              isSelected: _selectedCategory == LostItemCategory.marked,
               onTap: () => setState(() {
-                _selectedCategory = const LostItemCategory.marked();
+                _selectedCategory = LostItemCategory.marked;
               }),
             ),
             const SizedBox(height: 12),
             
             _CategorySelectionCard(
-              category: const LostItemCategory.curious(),
-              isSelected: _selectedCategory == const LostItemCategory.curious(),
+              category: LostItemCategory.curious,
+              isSelected: _selectedCategory == LostItemCategory.curious,
               onTap: () => setState(() {
-                _selectedCategory = const LostItemCategory.curious();
+                _selectedCategory = LostItemCategory.curious;
               }),
             ),
             const SizedBox(height: 32),
@@ -258,12 +258,17 @@ class _CategorySelectionCard extends StatelessWidget {
   }
 
   IconData _getCategoryIcon(LostItemCategory category) {
-    return category.when(
-      lost: () => Icons.help_outline,
-      tossed: () => Icons.delete_outline,
-      posted: () => Icons.campaign_outlined,
-      marked: () => Icons.brush_outlined,
-      curious: () => Icons.psychology_outlined,
-    );
+    switch (category) {
+      case LostItemCategory.lost:
+        return Icons.help_outline;
+      case LostItemCategory.tossed:
+        return Icons.delete_outline;
+      case LostItemCategory.posted:
+        return Icons.campaign_outlined;
+      case LostItemCategory.marked:
+        return Icons.brush_outlined;
+      case LostItemCategory.curious:
+        return Icons.psychology_outlined;
+    }
   }
 }

@@ -12,7 +12,7 @@
     <application
         android:label="Lost &amp; Tossed"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@drawable/ic_launcher">
         
         <!-- Main Activity using Flutter v2 embedding -->
         <activity

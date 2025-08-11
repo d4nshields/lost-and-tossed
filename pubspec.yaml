@@ -1,63 +1,81 @@
 name: lost_and_tossed
-description: "A playful community field guide for documenting found, discarded, or posted public objects"
-publish_to: 'none'
+description: A playful community field guide for documenting found, discarded, or posted public objects.
 version: 1.0.0+1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.10.0"
 
 dependencies:
   flutter:
     sdk: flutter
   
-  # State Management & Navigation
-  flutter_riverpod: ^2.4.9
-  go_router: ^12.1.3
+  # State Management
+  flutter_riverpod: ^2.4.5
+  riverpod_annotation: ^2.2.1
   
-  # Backend & Database
-  supabase_flutter: ^2.3.4
-  flutter_dotenv: ^5.1.0
-  
-  # Location & Mapping
-  geolocator: ^10.1.0
-  dart_geohash: ^2.1.0
-  
-  # ML Kit & Image Processing
-  google_mlkit_face_detection: ^0.13.1
-  google_mlkit_text_recognition: ^0.15.0
-  image: ^4.1.3
-  
-  # Data Classes & Serialization
-  freezed_annotation: ^2.4.1
-  json_annotation: ^4.8.1
+  # Navigation
+  go_router: ^12.1.1
   
   # Internationalization
+  intl: ^0.20.2
   flutter_localizations:
     sdk: flutter
+    
+  # Supabase
+  supabase: ^1.11.11
+  
+  # Location & Maps
+  geolocator: ^10.1.0
+  latlong2: ^0.8.1
+  geohash_plus: ^1.0.2
+  
+  # Image handling & ML
+  image_picker: ^1.0.4
+  image: ^4.1.3
+  google_mlkit_face_detection: ^0.10.0
+  google_mlkit_text_recognition: ^0.13.0
+  
+  # UI Components
+  cached_network_image: ^3.3.0
+  photo_view: ^0.14.0
+  flutter_staggered_grid_view: ^0.7.0
+  
+  # Utilities
+  path_provider: ^2.1.1
+  permission_handler: ^11.0.1
+  share_plus: ^7.2.1
+  uuid: ^4.1.0
+  json_annotation: ^4.9.0
+  
+  # Logging & Analytics
+  logger: ^2.0.2+1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
   
   # Code Generation
+  riverpod_generator: ^2.3.5
   build_runner: ^2.4.7
-  freezed: ^2.4.6
+  json_annotation: ^4.8.1
   json_serializable: ^6.7.1
   
+  # Linting
+  flutter_lints: ^3.0.0
+  
   # Testing
-  mocktail: ^1.0.2
-  golden_toolkit: ^0.15.0
+  mocktail: ^1.0.1
   integration_test:
     sdk: flutter
 
 flutter:
   uses-material-design: true
   generate: true
-  
-  assets:
-    - assets/images/
-    - .env
-
-flutter_intl:
-  enabled: true
+    
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
+        - asset: assets/fonts/Inter-Italic-VariableFont_opsz,wght.ttf
+          style: italic

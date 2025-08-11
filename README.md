@@ -1,224 +1,152 @@
-# Lost & Tossed 🔍📱
+# Lost & Tossed
 
-> A playful community field guide for documenting found, discarded, or posted public objects
+A playful community field guide for documenting found, discarded, or posted public objects.
 
-Lost & Tossed is a Flutter mobile app that turns everyday observations into a shared community map. Document the gloves, posters, mysterious objects, and curious items you encounter in your daily life, creating a collective record of the world around us.
+## Overview
 
-## ✨ Features
+Lost & Tossed is a mobile application that helps users document and share interesting objects they encounter in public spaces. The app focuses on building a community-driven map of our shared environment with a curious, kind, and non-judgmental approach.
 
-- **📸 Capture Objects**: Photo documentation with automatic privacy protection
-- **🏷️ Smart Categorization**: Five intuitive categories for different types of finds
-- **🗺️ Privacy-First Location**: Coarse location tracking that protects exact addresses
-- **📄 Flexible Licensing**: Choose between CC BY-NC and CC0 for your contributions
-- **🎨 Playful Interface**: Curious, kind, and never judgmental tone throughout
-- **🔒 Privacy Controls**: Face/license plate detection with automatic blurring
+## Project Status: MVP Database Schema Complete ✅
 
-## 📱 Categories
+### Database Schema - FULLY IMPLEMENTED ✅
+- ✅ **Supabase Database**: Complete schema matching exact requirements
+- ✅ **Core Tables**: `users`, `submissions`, `lists`, `tags`, `submission_tags`
+- ✅ **Exact Schema Match**: All table names, columns, and constraints per specification
+- ✅ **RLS Policies**: `safety_flags.hidden != true` read policy, user ownership for writes
+- ✅ **Seeded Data**: Common tags (shiny, tiny, mystery, colorful) pre-loaded
+- ✅ **Idempotent Migrations**: Proper migration structure with documentation
+- ✅ **Privacy-First Design**: Geohash for coarse location, optional exact coordinates
+- ✅ **Moderation System**: Built-in content moderation via safety_flags
+- ✅ **OCR Support**: Lists table for text recognition and correction
 
-- **Lost** - Unintentionally left behind *(A glove begins its solo adventure)*
-- **Tossed** - Deliberately discarded *(The snack that left only a clue)*
-- **Posted** - Intended for display *(Poster's still here, but the event is long gone)*
-- **Marked** - Non-removable markings *(Someone's creative mark on the world)*
-- **Curious** - Odd or unclassifiable *(What story does this tell?)*
+### Architecture & Core Setup
+- ✅ **Flutter Project Structure**: Feature-first architecture
+- ✅ **State Management**: Riverpod with providers for DI
+- ✅ **Routing**: GoRouter with authentication guards
+- ✅ **Theme System**: Material 3 design with custom color palette
+- ✅ **Dependency Injection**: Clean service layer architecture
 
-## 🚀 Getting Started
+### Core Services
+- ✅ **Supabase Service**: Database operations with error handling
+- ✅ **Location Service**: GPS, geohash generation, privacy-conscious
+- ✅ **Image Service**: ML Kit integration for face/text detection and blurring
+- ✅ **Storage Service**: Supabase Storage for images and thumbnails
 
-### Prerequisites
+### UI Foundation
+- ✅ **Main App Structure**: App initialization, error handling, theming
+- ✅ **Navigation Shell**: Bottom navigation with floating action button
+- ✅ **Screen Placeholders**: All main screens stubbed out
+- ✅ **Loading States**: Professional loading and error screens
 
-- Flutter 3.16.0 or higher
-- Dart 3.0 or higher
-- Android Studio / VS Code with Flutter extensions
-- iOS Simulator (for iOS development) or Android Emulator
+## Features
 
-### Setup
+### Categories
+1. **Lost** 🧤 - Unintentionally left behind (gloves, keys, toys)
+2. **Tossed** 🗑️ - Deliberately discarded (wrappers, cans, packaging)
+3. **Posted** 📋 - Intended for display (flyers, posters, stickers)
+4. **Marked** 🎨 - Non-removable markings (graffiti, stencils, chalk art)
+5. **Curious** 🤔 - Anything else odd or unclassifiable
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/your-username/lost-and-tossed.git
-   cd lost-and-tossed
-   ```
+### Privacy Protection
+- **Automatic Face Blurring**: ML Kit detects and blurs faces
+- **Sensitive Text Detection**: License plates, house numbers, phone numbers
+- **Location Privacy**: Stores coarse geohash (~152m precision) by default
+- **Optional Exact Location**: Users can opt-in to share precise coordinates
 
-2. **Install dependencies**
-   ```bash
-   flutter pub get
-   ```
+### Tech Stack
+- **Frontend**: Flutter with Riverpod state management
+- **Backend**: Supabase (PostgreSQL + Auth + Storage + RLS)
+- **Navigation**: GoRouter for type-safe routing
+- **Image Processing**: Google ML Kit for privacy protection
+- **Location**: Geolocator with geohash encoding
+- **Testing**: Unit tests, widget tests, integration tests
 
-3. **Environment configuration**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your Supabase credentials
-   ```
+## Next Steps
 
-4. **Generate code**
-   ```bash
-   flutter packages pub run build_runner build --delete-conflicting-outputs
-   ```
+### Immediate (Next Session)
+1. **Authentication Flow**: Complete login/signup with Supabase Auth
+2. **Item Capture Flow**: Camera integration with privacy processing
+3. **Home Screen**: Display items with infinite scroll and filtering
+4. **Item Repository**: Riverpod providers for item management
 
-5. **Run the app**
-   ```bash
-   flutter run
-   ```
+### Short Term
+1. **Item Detail Screen**: Full item view with comments and likes
+2. **Search Functionality**: Text search with category filters
+3. **Profile Management**: User profiles and settings
+4. **Offline Support**: Local caching and sync
 
-### Environment Variables
+### Medium Term
+1. **Map Integration**: Visual map of discoveries
+2. **Push Notifications**: New items in your area
+3. **Social Features**: Following users, activity feeds
+4. **Advanced Moderation**: Community reporting and admin tools
 
-Create a `.env` file in the project root with:
+## Database Schema
 
-```env
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_ANON_KEY=your_supabase_anon_key
-ENABLE_ANALYTICS=false
-```
+### Core Tables
+- `users` - User profiles with unique handles
+- `submissions` - Main content with privacy-conscious location storage
+- `lists` - OCR text processing for found documents
+- `tags` - Predefined and user-created tags
+- `submission_tags` - Many-to-many tagging system
 
-## 🧪 Testing
+### Privacy Design
+- Geohash precision 5 (~152m x 152m grid) for public location data
+- Optional exact coordinates stored separately
+- Automatic image processing to blur faces and sensitive text
+- Row Level Security (RLS) policies for data access control
 
-### Run all tests
+## Development Commands
+
 ```bash
+# Install dependencies
+flutter pub get
+
+# Run code generation
+dart run build_runner build
+
+# Run tests
 flutter test
+
+# Run app
+flutter run
 ```
 
-### Run tests with coverage
-```bash
-flutter test --coverage
-```
+## Architecture Decisions
 
-### Run integration tests
-```bash
-flutter test integration_test/
-```
-
-### Generate golden files
-```bash
-flutter test --update-goldens
-```
-
-## 🏗️ Architecture
-
-Lost & Tossed follows a feature-first architecture with clean separation of concerns:
-
+### 1. Feature-First Structure
 ```
 lib/
-├── features/           # Feature modules (auth, capture, explore, profile)
-├── shared/            # Shared models and widgets
-├── core/              # App infrastructure (routing, theme, constants)
-└── services/          # External service integrations
+├── core/           # App-wide configuration
+├── features/       # Feature modules (auth, items, capture, profile)
+├── shared/         # Shared components and services
 ```
 
-**Key Technologies:**
-- **State Management**: Riverpod
-- **Navigation**: GoRouter  
-- **Backend**: Supabase (PostgreSQL + Auth + Storage)
-- **Location**: Geolocator + dart_geohash (Dart 3 compatible)
-- **Image ML**: Google ML Kit (face detection, text recognition)
-- **Testing**: Flutter Test + Golden Toolkit
+### 2. Clean Architecture Layers
+- **Presentation**: Riverpod providers, screens, widgets
+- **Domain**: Business logic and models
+- **Data**: Services for API, storage, location
 
-See [docs/architecture.md](docs/architecture.md) for detailed architectural decisions.
+### 3. Privacy by Design
+- Default to coarse location (geohash level 5)
+- Automatic detection and blurring of sensitive content
+- User consent for exact location sharing
+- Minimal data collection with clear purpose
 
-## 🔒 Privacy & Security
+### 4. Community-Driven Moderation
+- User reporting system
+- Content approval workflow
+- Community guidelines enforcement
+- Graduated response system
 
-Lost & Tossed is designed with privacy as a core principle:
+## Contributing
 
-- **Location Privacy**: Uses coarse geohash (~2.4km precision) by default
-- **Image Privacy**: Automatic face and license plate detection with blurring
-- **Data Minimization**: Only collects necessary information
-- **User Control**: Granular privacy settings for all features
-- **Open Licensing**: Default CC BY-NC with CC0 option
+This is an MVP demonstrating clean Flutter architecture with Supabase backend. The codebase emphasizes:
+- Type safety with comprehensive models
+- Privacy protection through technical and design measures
+- Scalable architecture supporting future feature additions
+- Community-focused user experience design
 
-## 🚀 Deployment
+## License
 
-### Android
-
-```bash
-# Build APK
-flutter build apk --release
-
-# Build App Bundle (recommended for Play Store)
-flutter build appbundle --release
-
-# Deploy via Fastlane
-cd android && fastlane beta
-```
-
-### iOS
-
-```bash
-# Build iOS app
-flutter build ios --release
-
-# Deploy via Fastlane
-cd ios && fastlane beta
-```
-
-## 🧰 Development Tools
-
-### Code Generation
-```bash
-# Run code generation (models, routing)
-flutter packages pub run build_runner build
-
-# Watch for changes
-flutter packages pub run build_runner watch
-```
-
-### Code Quality
-```bash
-# Format code
-dart format .
-
-# Analyze code
-flutter analyze
-
-# Run linter
-dart run custom_lint
-```
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-### Development Workflow
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Add tests for new functionality
-5. Ensure all tests pass (`flutter test`)
-6. Commit your changes (`git commit -m 'Add amazing feature'`)
-7. Push to the branch (`git push origin feature/amazing-feature`)
-8. Open a Pull Request
-
-## 📚 Documentation
-
-- [Architecture Documentation](docs/architecture.md)
-- [API Documentation](docs/api.md) *(coming soon)*
-- [Deployment Guide](docs/deployment.md) *(coming soon)*
-
-## 🐛 Issues & Support
-
-- **Bug Reports**: [GitHub Issues](https://github.com/your-username/lost-and-tossed/issues)
-- **Feature Requests**: [GitHub Discussions](https://github.com/your-username/lost-and-tossed/discussions)
-- **Security Issues**: Email security@lostandtossed.app
-
-## 🎯 Roadmap
-
-- [ ] **V1.0**: Core capture and exploration features
-- [ ] **V1.1**: Advanced search and filtering
-- [ ] **V1.2**: Community features (favorites, sharing)
-- [ ] **V1.3**: Offline support and sync
-- [ ] **V2.0**: Enhanced ML detection and content moderation
-
-## 🙏 Acknowledgments
-
-- Flutter team for the amazing framework
-- Supabase for the backend infrastructure
-- Google ML Kit for privacy-protecting image analysis
-- The open source community for inspiration and tools
-
----
-
-**Made with ❤️ and curiosity about the world around us**
-
-*Remember: Every object has a story. What will you discover today?*
+This project demonstrates modern Flutter development practices and architectural patterns for community-driven mobile applications.

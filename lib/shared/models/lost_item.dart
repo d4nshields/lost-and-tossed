@@ -1,68 +1,122 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+// Temporary simplified model without code generation for initial build
+// This will be replaced with proper Freezed models after code generation works
 
-part 'lost_item.freezed.dart';
-part 'lost_item.g.dart';
-
-@freezed
-class LostItem with _$LostItem {
-  const factory LostItem({
-    required String id,
-    required String title,
-    required String description,
-    required LostItemCategory category,
-    required String imageUrl,
-    required String geohash,
-    required DateTime createdAt,
-    required String createdBy,
-    @Default(LicenseType.ccByNc) LicenseType license,
-    String? exactLocation, // Private field for contributor only
-    Map<String, dynamic>? metadata,
-  }) = _LostItem;
-
-  factory LostItem.fromJson(Map<String, dynamic> json) => _$LostItemFromJson(json);
-}
-
-@freezed
-class LostItemCategory with _$LostItemCategory {
-  const factory LostItemCategory.lost() = _Lost;
-  const factory LostItemCategory.tossed() = _Tossed;
-  const factory LostItemCategory.posted() = _Posted;
-  const factory LostItemCategory.marked() = _Marked;
-  const factory LostItemCategory.curious() = _Curious;
-
-  factory LostItemCategory.fromJson(Map<String, dynamic> json) => 
-      _$LostItemCategoryFromJson(json);
+enum LostItemCategory {
+  lost,
+  tossed,
+  posted,
+  marked,
+  curious,
 }
 
 enum LicenseType {
-  @JsonValue('cc_by_nc')
   ccByNc,
-  @JsonValue('cc0')
   cc0,
 }
 
+class LostItem {
+  const LostItem({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.category,
+    required this.imageUrl,
+    required this.geohash,
+    required this.createdAt,
+    required this.createdBy,
+    this.license = LicenseType.ccByNc,
+    this.exactLocation,
+    this.metadata,
+  });
+
+  final String id;
+  final String title;
+  final String description;
+  final LostItemCategory category;
+  final String imageUrl;
+  final String geohash;
+  final DateTime createdAt;
+  final String createdBy;
+  final LicenseType license;
+  final String? exactLocation;
+  final Map<String, dynamic>? metadata;
+
+  factory LostItem.fromJson(Map<String, dynamic> json) {
+    return LostItem(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      category: LostItemCategory.values.byName(json['category']),
+      imageUrl: json['imageUrl'],
+      geohash: json['geohash'],
+      createdAt: DateTime.parse(json['createdAt']),
+      createdBy: json['createdBy'],
+      license: LicenseType.values.byName(json['license'] ?? 'ccByNc'),
+      exactLocation: json['exactLocation'],
+      metadata: json['metadata'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'category': category.name,
+      'imageUrl': imageUrl,
+      'geohash': geohash,
+      'createdAt': createdAt.toIso8601String(),
+      'createdBy': createdBy,
+      'license': license.name,
+      'exactLocation': exactLocation,
+      'metadata': metadata,
+    };
+  }
+}
+
 extension LostItemCategoryExtension on LostItemCategory {
-  String get name => when(
-    lost: () => 'Lost',
-    tossed: () => 'Tossed',
-    posted: () => 'Posted',
-    marked: () => 'Marked',
-    curious: () => 'Curious',
-  );
+  String get name {
+    switch (this) {
+      case LostItemCategory.lost:
+        return 'Lost';
+      case LostItemCategory.tossed:
+        return 'Tossed';
+      case LostItemCategory.posted:
+        return 'Posted';
+      case LostItemCategory.marked:
+        return 'Marked';
+      case LostItemCategory.curious:
+        return 'Curious';
+    }
+  }
 
-  String get description => when(
-    lost: () => 'Unintentionally left behind',
-    tossed: () => 'Deliberately discarded',
-    posted: () => 'Intended for display',
-    marked: () => 'Non-removable markings',
-    curious: () => 'Odd or unclassifiable',
-  );
+  String get description {
+    switch (this) {
+      case LostItemCategory.lost:
+        return 'Unintentionally left behind';
+      case LostItemCategory.tossed:
+        return 'Deliberately discarded';
+      case LostItemCategory.posted:
+        return 'Intended for display';
+      case LostItemCategory.marked:
+        return 'Non-removable markings';
+      case LostItemCategory.curious:
+        return 'Odd or unclassifiable';
+    }
+  }
 
-  String get playfulDescription => when(
-    lost: () => 'A glove begins its solo adventure.',
-    tossed: () => 'The snack that left only a clue.',
-    posted: () => 'Poster\'s still here, but the event is long gone.',
-    marked: () => 'Someone\'s creative mark on the world.',
-    curious: () => 'What story does this tell?',
-  );
+  String get playfulDescription {
+    switch (this) {
+      case LostItemCategory.lost:
+        return 'A glove begins its solo adventure.';
+      case LostItemCategory.tossed:
+        return 'The snack that left only a clue.';
+      case LostItemCategory.posted:
+        return 'Poster\'s still here, but the event is long gone.';
+      case LostItemCategory.marked:
+        return 'Someone\'s creative mark on the world.';
+      case LostItemCategory.curious:
+        return 'What story does this tell?';
+    }
+  }
 }
