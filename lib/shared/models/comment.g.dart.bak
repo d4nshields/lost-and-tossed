@@ -1,0 +1,47 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'comment.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Comment _$CommentFromJson(Map<String, dynamic> json) => Comment(
+      id: json['id'] as String,
+      itemId: json['item_id'] as String,
+      authorId: json['author_id'] as String,
+      content: json['content'] as String,
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at'] as String),
+      author: json['author'] == null
+          ? null
+          : Profile.fromJson(json['author'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
+      'id': instance.id,
+      'item_id': instance.itemId,
+      'author_id': instance.authorId,
+      'content': instance.content,
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
+      'author': instance.author,
+    };
+
+CreateCommentRequest _$CreateCommentRequestFromJson(
+        Map<String, dynamic> json) =>
+    CreateCommentRequest(
+      itemId: json['item_id'] as String,
+      content: json['content'] as String,
+    );
+
+Map<String, dynamic> _$CreateCommentRequestToJson(
+        CreateCommentRequest instance) =>
+    <String, dynamic>{
+      'item_id': instance.itemId,
+      'content': instance.content,
+    };

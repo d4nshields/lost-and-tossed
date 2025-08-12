@@ -1,0 +1,112 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'item.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+Item _$ItemFromJson(Map<String, dynamic> json) => Item(
+      id: json['id'] as String,
+      contributorId: json['contributor_id'] as String,
+      title: json['title'] as String,
+      description: json['description'] as String?,
+      category: $enumDecode(_$ItemCategoryEnumMap, json['category']),
+      license: $enumDecode(_$LicenseTypeEnumMap, json['license']),
+      geohash: json['geohash'] as String,
+      exactLat: (json['exact_lat'] as num?)?.toDouble(),
+      exactLng: (json['exact_lng'] as num?)?.toDouble(),
+      locationName: json['location_name'] as String?,
+      imageUrl: json['image_url'] as String?,
+      imageThumbnailUrl: json['image_thumbnail_url'] as String?,
+      foundAt: json['found_at'] == null
+          ? null
+          : DateTime.parse(json['found_at'] as String),
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at'] as String),
+      status: $enumDecode(_$ModerationStatusEnumMap, json['status']),
+      moderatorNotes: json['moderator_notes'] as String?,
+      contributor: json['contributor'] == null
+          ? null
+          : Profile.fromJson(json['contributor'] as Map<String, dynamic>),
+      likeCount: (json['like_count'] as num?)?.toInt(),
+      commentCount: (json['comment_count'] as num?)?.toInt(),
+      userLiked: json['user_liked'] as bool?,
+    );
+
+Map<String, dynamic> _$ItemToJson(Item instance) => <String, dynamic>{
+      'id': instance.id,
+      'contributor_id': instance.contributorId,
+      'title': instance.title,
+      'description': instance.description,
+      'category': _$ItemCategoryEnumMap[instance.category]!,
+      'license': _$LicenseTypeEnumMap[instance.license]!,
+      'geohash': instance.geohash,
+      'exact_lat': instance.exactLat,
+      'exact_lng': instance.exactLng,
+      'location_name': instance.locationName,
+      'image_url': instance.imageUrl,
+      'image_thumbnail_url': instance.imageThumbnailUrl,
+      'found_at': instance.foundAt?.toIso8601String(),
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
+      'status': _$ModerationStatusEnumMap[instance.status]!,
+      'moderator_notes': instance.moderatorNotes,
+      'contributor': instance.contributor,
+      'like_count': instance.likeCount,
+      'comment_count': instance.commentCount,
+      'user_liked': instance.userLiked,
+    };
+
+const _$ItemCategoryEnumMap = {
+  ItemCategory.lost: 'lost',
+  ItemCategory.tossed: 'tossed',
+  ItemCategory.posted: 'posted',
+  ItemCategory.marked: 'marked',
+  ItemCategory.curious: 'curious',
+};
+
+const _$LicenseTypeEnumMap = {
+  LicenseType.ccByNc: 'cc_by_nc',
+  LicenseType.cc0: 'cc0',
+};
+
+const _$ModerationStatusEnumMap = {
+  ModerationStatus.pending: 'pending',
+  ModerationStatus.approved: 'approved',
+  ModerationStatus.rejected: 'rejected',
+  ModerationStatus.flagged: 'flagged',
+};
+
+CreateItemRequest _$CreateItemRequestFromJson(Map<String, dynamic> json) =>
+    CreateItemRequest(
+      title: json['title'] as String,
+      description: json['description'] as String?,
+      category: $enumDecode(_$ItemCategoryEnumMap, json['category']),
+      license: $enumDecodeNullable(_$LicenseTypeEnumMap, json['license']) ??
+          LicenseType.ccByNc,
+      geohash: json['geohash'] as String,
+      exactLat: (json['exactLat'] as num?)?.toDouble(),
+      exactLng: (json['exactLng'] as num?)?.toDouble(),
+      locationName: json['locationName'] as String?,
+      foundAt: json['foundAt'] == null
+          ? null
+          : DateTime.parse(json['foundAt'] as String),
+    );
+
+Map<String, dynamic> _$CreateItemRequestToJson(CreateItemRequest instance) =>
+    <String, dynamic>{
+      'title': instance.title,
+      'description': instance.description,
+      'category': _$ItemCategoryEnumMap[instance.category]!,
+      'license': _$LicenseTypeEnumMap[instance.license]!,
+      'geohash': instance.geohash,
+      'exactLat': instance.exactLat,
+      'exactLng': instance.exactLng,
+      'locationName': instance.locationName,
+      'foundAt': instance.foundAt?.toIso8601String(),
+    };

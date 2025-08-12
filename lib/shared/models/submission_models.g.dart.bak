@@ -1,0 +1,167 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'submission_models.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+User _$UserFromJson(Map<String, dynamic> json) => User(
+      id: json['id'] as String,
+      handle: json['handle'] as String,
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+    );
+
+Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
+      'id': instance.id,
+      'handle': instance.handle,
+      'created_at': instance.createdAt?.toIso8601String(),
+    };
+
+SubmissionUrls _$SubmissionUrlsFromJson(Map<String, dynamic> json) =>
+    SubmissionUrls(
+      original: json['original'] as String?,
+      thumbnail: json['thumbnail'] as String?,
+      processed: json['processed'] as String?,
+    );
+
+Map<String, dynamic> _$SubmissionUrlsToJson(SubmissionUrls instance) =>
+    <String, dynamic>{
+      'original': instance.original,
+      'thumbnail': instance.thumbnail,
+      'processed': instance.processed,
+    };
+
+SafetyFlags _$SafetyFlagsFromJson(Map<String, dynamic> json) => SafetyFlags(
+      hidden: json['hidden'] as bool?,
+      reported: json['reported'] as bool?,
+      reviewed: json['reviewed'] as bool?,
+      reason: json['reason'] as String?,
+    );
+
+Map<String, dynamic> _$SafetyFlagsToJson(SafetyFlags instance) =>
+    <String, dynamic>{
+      'hidden': instance.hidden,
+      'reported': instance.reported,
+      'reviewed': instance.reviewed,
+      'reason': instance.reason,
+    };
+
+Submission _$SubmissionFromJson(Map<String, dynamic> json) => Submission(
+      id: json['id'] as String,
+      userId: json['user_id'] as String,
+      category: $enumDecode(_$SubmissionCategoryEnumMap, json['category']),
+      caption: json['caption'] as String?,
+      tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      license: $enumDecode(_$LicenseTypeEnumMap, json['license']),
+      disposed: json['disposed'] as bool?,
+      geohash5: json['geohash5'] as String,
+      lat: (json['lat'] as num?)?.toDouble(),
+      lon: (json['lon'] as num?)?.toDouble(),
+      foundAt: json['found_at'] == null
+          ? null
+          : DateTime.parse(json['found_at'] as String),
+      urls: SubmissionUrls.fromJson(json['urls'] as Map<String, dynamic>),
+      safetyFlags: json['safety_flags'] == null
+          ? null
+          : SafetyFlags.fromJson(json['safety_flags'] as Map<String, dynamic>),
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+      user: json['user'] == null
+          ? null
+          : User.fromJson(json['user'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$SubmissionToJson(Submission instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'user_id': instance.userId,
+      'category': _$SubmissionCategoryEnumMap[instance.category]!,
+      'caption': instance.caption,
+      'tags': instance.tags,
+      'license': _$LicenseTypeEnumMap[instance.license]!,
+      'disposed': instance.disposed,
+      'geohash5': instance.geohash5,
+      'lat': instance.lat,
+      'lon': instance.lon,
+      'found_at': instance.foundAt?.toIso8601String(),
+      'urls': instance.urls,
+      'safety_flags': instance.safetyFlags,
+      'created_at': instance.createdAt?.toIso8601String(),
+      'user': instance.user,
+    };
+
+const _$SubmissionCategoryEnumMap = {
+  SubmissionCategory.lost: 'lost',
+  SubmissionCategory.tossed: 'tossed',
+  SubmissionCategory.posted: 'posted',
+  SubmissionCategory.marked: 'marked',
+  SubmissionCategory.curious: 'curious',
+};
+
+const _$LicenseTypeEnumMap = {
+  LicenseType.ccByNc: 'CC_BY_NC',
+  LicenseType.cc0: 'CC0',
+};
+
+CreateSubmissionRequest _$CreateSubmissionRequestFromJson(
+        Map<String, dynamic> json) =>
+    CreateSubmissionRequest(
+      category: $enumDecode(_$SubmissionCategoryEnumMap, json['category']),
+      caption: json['caption'] as String?,
+      tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      license: $enumDecodeNullable(_$LicenseTypeEnumMap, json['license']) ??
+          LicenseType.ccByNc,
+      geohash5: json['geohash5'] as String,
+      lat: (json['lat'] as num?)?.toDouble(),
+      lon: (json['lon'] as num?)?.toDouble(),
+      foundAt: json['foundAt'] == null
+          ? null
+          : DateTime.parse(json['foundAt'] as String),
+      urls: SubmissionUrls.fromJson(json['urls'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$CreateSubmissionRequestToJson(
+        CreateSubmissionRequest instance) =>
+    <String, dynamic>{
+      'category': _$SubmissionCategoryEnumMap[instance.category]!,
+      'caption': instance.caption,
+      'tags': instance.tags,
+      'license': _$LicenseTypeEnumMap[instance.license]!,
+      'geohash5': instance.geohash5,
+      'lat': instance.lat,
+      'lon': instance.lon,
+      'foundAt': instance.foundAt?.toIso8601String(),
+      'urls': instance.urls,
+    };
+
+Tag _$TagFromJson(Map<String, dynamic> json) => Tag(
+      id: json['id'] as String,
+      name: json['name'] as String,
+    );
+
+Map<String, dynamic> _$TagToJson(Tag instance) => <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+    };
+
+SubmissionList _$SubmissionListFromJson(Map<String, dynamic> json) =>
+    SubmissionList(
+      id: json['id'] as String,
+      submissionId: json['submission_id'] as String,
+      ocrText: json['ocr_text'] as String?,
+      correctedText: json['corrected_text'] as String?,
+      wordCount: (json['word_count'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$SubmissionListToJson(SubmissionList instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'submission_id': instance.submissionId,
+      'ocr_text': instance.ocrText,
+      'corrected_text': instance.correctedText,
+      'word_count': instance.wordCount,
+    };
