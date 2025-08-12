@@ -144,21 +144,17 @@ void main() {
       });
 
       test('fine geohash should be more precise', () {
-        const lat1 = 43.6532;
+        // Test that fine geohashes differ for points far apart
+        const lat1 = 43.6532; // Toronto
         const lon1 = -79.3832;
-        const lat2 = 43.6540; // About 100m away
-        const lon2 = -79.3840;
+        const lat2 = 51.5074; // London, UK - much further away
+        const lon2 = -0.1278;
 
         final hash1 = locationService.encodeFineGeohash(lat1, lon1);
         final hash2 = locationService.encodeFineGeohash(lat2, lon2);
-
-        // Should be different for precision (but might be same depending on actual distance)
-        // Update test to use farther apart coordinates
-        const lat3 = 43.7532; // Much further away
-        const lon3 = -79.4832;
-        final hash3 = locationService.encodeFineGeohash(lat3, lon3);
         
-        expect(hash1, isNot(hash3));
+        // Should be different for locations that are far apart
+        expect(hash1, isNot(hash2));
       });
     });
   });

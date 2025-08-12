@@ -138,6 +138,15 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
                 _selectedCategory = LostItemCategory.curious;
               }),
             ),
+            const SizedBox(height: 12),
+
+            _CategorySelectionCard(
+              category: LostItemCategory.traces,
+              isSelected: _selectedCategory == LostItemCategory.traces,
+              onTap: () => setState(() {
+                _selectedCategory = LostItemCategory.traces;
+              }),
+            ),
             const SizedBox(height: 32),
 
             // Continue button
@@ -211,7 +220,7 @@ class _CategorySelectionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      category.name,
+                      category.displayName,
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
@@ -268,6 +277,8 @@ class _CategorySelectionCard extends StatelessWidget {
         return Icons.brush_outlined;
       case LostItemCategory.curious:
         return Icons.psychology_outlined;
+      case LostItemCategory.traces:
+        return Icons.directions_walk;
     }
   }
 }
