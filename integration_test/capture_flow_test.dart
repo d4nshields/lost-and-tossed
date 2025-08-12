@@ -32,7 +32,7 @@ void main() {
 
       // TODO: Implement full capture flow when auth and capture features are complete
       // This is a placeholder integration test that verifies basic app startup
-      
+
       // Future steps would include:
       // 1. Navigate to capture screen
       // 2. Select camera/gallery

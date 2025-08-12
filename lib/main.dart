@@ -25,7 +25,7 @@ class LostAndTossedApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Watch app initialization
     final appInitAsyncValue = ref.watch(appInitProvider);
-    
+
     return appInitAsyncValue.when(
       loading: () => MaterialApp(
         title: AppConstants.appName,
@@ -34,7 +34,6 @@ class LostAndTossedApp extends ConsumerWidget {
         home: const LoadingScreen(),
         debugShowCheckedModeBanner: false,
       ),
-      
       error: (error, stackTrace) => MaterialApp(
         title: AppConstants.appName,
         theme: AppTheme.lightTheme,
@@ -45,21 +44,20 @@ class LostAndTossedApp extends ConsumerWidget {
         ),
         debugShowCheckedModeBanner: false,
       ),
-      
       data: (_) {
         final router = ref.watch(routerProvider);
-        
+
         return MaterialApp.router(
           title: AppConstants.appName,
-          
+
           // Routing
           routerConfig: router,
-          
+
           // Theming
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: ThemeMode.system,
-          
+
           // Localization
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
@@ -69,16 +67,17 @@ class LostAndTossedApp extends ConsumerWidget {
           supportedLocales: const [
             Locale('en', 'US'),
           ],
-          
+
           // Debug
           debugShowCheckedModeBanner: false,
-          
+
           // App metadata
           builder: (context, child) {
             return MediaQuery(
               // Ensure text scaling doesn't break layouts
               data: MediaQuery.of(context).copyWith(
-                textScaleFactor: MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.2),
+                textScaleFactor:
+                    MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.2),
               ),
               child: child ?? const SizedBox.shrink(),
             );
@@ -114,27 +113,27 @@ class _ErrorScreen extends StatelessWidget {
                 size: 64,
                 color: Theme.of(context).colorScheme.error,
               ),
-              
+
               const SizedBox(height: AppTheme.spaceLg),
-              
+
               // Error title
               Text(
                 'Oops! Something went wrong',
                 style: Theme.of(context).textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: AppTheme.spaceMd),
-              
+
               // Error message
               Text(
                 'We had trouble starting the app. Please check your internet connection and try again.',
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: AppTheme.spaceSm),
-              
+
               // Technical details (in debug mode)
               if (kDebugMode) ...[
                 const SizedBox(height: AppTheme.spaceMd),
@@ -144,7 +143,10 @@ class _ErrorScreen extends StatelessWidget {
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                     border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .outline
+                          .withOpacity(0.3),
                     ),
                   ),
                   child: Column(
@@ -152,24 +154,25 @@ class _ErrorScreen extends StatelessWidget {
                     children: [
                       Text(
                         'Debug Info:',
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style:
+                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                       ),
                       const SizedBox(height: AppTheme.spaceSm),
                       Text(
                         error.toString(),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontFamily: 'monospace',
-                        ),
+                              fontFamily: 'monospace',
+                            ),
                       ),
                     ],
                   ),
                 ),
               ],
-              
+
               const SizedBox(height: AppTheme.spaceXl),
-              
+
               // Retry button
               ElevatedButton.icon(
                 onPressed: onRetry,

@@ -121,9 +121,9 @@ extension AppErrorExtension on AppError {
   }
 
   bool get isRetryable {
-    return this is NetworkError || 
-           this is StorageError || 
-           this is LocationError || 
-           this is UnknownError;
+    return this is NetworkError ||
+        this is StorageError ||
+        this is LocationError ||
+        this is UnknownError;
   }
 }

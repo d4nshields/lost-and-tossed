@@ -29,7 +29,8 @@ class Comment {
     this.author,
   });
 
-  factory Comment.fromJson(Map<String, dynamic> json) => _$CommentFromJson(json);
+  factory Comment.fromJson(Map<String, dynamic> json) =>
+      _$CommentFromJson(json);
   Map<String, dynamic> toJson() => _$CommentToJson(this);
 
   Comment copyWith({
@@ -79,7 +80,7 @@ class CreateCommentRequest {
     required this.content,
   });
 
-  factory CreateCommentRequest.fromJson(Map<String, dynamic> json) => 
+  factory CreateCommentRequest.fromJson(Map<String, dynamic> json) =>
       _$CreateCommentRequestFromJson(json);
   Map<String, dynamic> toJson() => _$CreateCommentRequestToJson(this);
 }

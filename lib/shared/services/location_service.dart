@@ -7,7 +7,7 @@ import '../../core/constants/app_constants.dart';
 /// Simplified location service for basic operations
 class LocationService {
   final Logger _logger;
-  
+
   LocationService({required Logger logger}) : _logger = logger;
 
   /// Initialize the location service
@@ -24,7 +24,8 @@ class LocationService {
       LocationPermission permission = await Geolocator.checkPermission();
       _logger.i('Initial location permission: $permission');
     } catch (e, stackTrace) {
-      _logger.e('Failed to initialize location service', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to initialize location service',
+          error: e, stackTrace: stackTrace);
     }
   }
 
@@ -35,7 +36,7 @@ class LocationService {
       final hasPermission = await hasLocationPermission();
       if (!hasPermission) {
         final permission = await requestLocationPermission();
-        if (permission != LocationPermission.always && 
+        if (permission != LocationPermission.always &&
             permission != LocationPermission.whileInUse) {
           _logger.w('Location permission not granted');
           return null;
@@ -48,10 +49,12 @@ class LocationService {
         timeLimit: AppConstants.locationTimeoutDuration,
       );
 
-      _logger.i('Current location: ${position.latitude}, ${position.longitude}');
+      _logger
+          .i('Current location: ${position.latitude}, ${position.longitude}');
       return position;
     } catch (e, stackTrace) {
-      _logger.e('Failed to get current location', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to get current location',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -60,10 +63,11 @@ class LocationService {
   Future<bool> hasLocationPermission() async {
     try {
       LocationPermission permission = await Geolocator.checkPermission();
-      return permission == LocationPermission.always || 
-             permission == LocationPermission.whileInUse;
+      return permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse;
     } catch (e, stackTrace) {
-      _logger.e('Failed to check location permission', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to check location permission',
+          error: e, stackTrace: stackTrace);
       return false;
     }
   }
@@ -80,7 +84,7 @@ class LocationService {
 
       // Check current permission
       LocationPermission permission = await Geolocator.checkPermission();
-      
+
       if (permission == LocationPermission.denied) {
         // Request permission
         permission = await Geolocator.requestPermission();
@@ -94,13 +98,15 @@ class LocationService {
 
       return permission;
     } catch (e, stackTrace) {
-      _logger.e('Failed to request location permission', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to request location permission',
+          error: e, stackTrace: stackTrace);
       return LocationPermission.denied;
     }
   }
 
   /// Generate a geohash from coordinates
-  String generateGeohash(double latitude, double longitude, {int precision = 5}) {
+  String generateGeohash(double latitude, double longitude,
+      {int precision = 5}) {
     try {
       final geohash = GeoHash.encode(latitude, longitude, precision: precision);
       _logger.d('Generated geohash: ${geohash.hash} for $latitude, $longitude');
@@ -133,7 +139,7 @@ class LocationService {
       if (position == null) return null;
 
       final geohash = generateGeohash(
-        position.latitude, 
+        position.latitude,
         position.longitude,
         precision: AppConstants.geohashPrecision,
       );
@@ -146,7 +152,8 @@ class LocationService {
         timestamp: position.timestamp ?? DateTime.now(),
       );
     } catch (e, stackTrace) {
-      _logger.e('Failed to get current location data', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to get current location data',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }

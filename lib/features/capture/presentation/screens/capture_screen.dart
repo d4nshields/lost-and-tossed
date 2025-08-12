@@ -84,16 +84,16 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Category selection
             Text(
               'What did you find?',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
             const SizedBox(height: 16),
-            
+
             // Category cards
             _CategorySelectionCard(
               category: LostItemCategory.lost,
@@ -103,7 +103,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               }),
             ),
             const SizedBox(height: 12),
-            
+
             _CategorySelectionCard(
               category: LostItemCategory.tossed,
               isSelected: _selectedCategory == LostItemCategory.tossed,
@@ -112,7 +112,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               }),
             ),
             const SizedBox(height: 12),
-            
+
             _CategorySelectionCard(
               category: LostItemCategory.posted,
               isSelected: _selectedCategory == LostItemCategory.posted,
@@ -121,7 +121,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               }),
             ),
             const SizedBox(height: 12),
-            
+
             _CategorySelectionCard(
               category: LostItemCategory.marked,
               isSelected: _selectedCategory == LostItemCategory.marked,
@@ -130,7 +130,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               }),
             ),
             const SizedBox(height: 12),
-            
+
             _CategorySelectionCard(
               category: LostItemCategory.curious,
               isSelected: _selectedCategory == LostItemCategory.curious,
@@ -139,7 +139,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> {
               }),
             ),
             const SizedBox(height: 32),
-            
+
             // Continue button
             FilledButton(
               onPressed: () {
@@ -175,7 +175,7 @@ class _CategorySelectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categoryColor = AppTheme.getCategoryColor(category.name);
-    
+
     return Card(
       elevation: isSelected ? 4 : 1,
       child: InkWell(
@@ -185,9 +185,8 @@ class _CategorySelectionCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: isSelected
-                ? Border.all(color: categoryColor, width: 2)
-                : null,
+            border:
+                isSelected ? Border.all(color: categoryColor, width: 2) : null,
           ),
           child: Row(
             children: [
@@ -205,7 +204,7 @@ class _CategorySelectionCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // Category info
               Expanded(
                 child: Column(
@@ -238,7 +237,7 @@ class _CategorySelectionCard extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               // Selection indicator
               if (isSelected)
                 Icon(

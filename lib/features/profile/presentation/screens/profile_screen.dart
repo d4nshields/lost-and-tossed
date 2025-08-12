@@ -31,7 +31,8 @@ class ProfileScreen extends ConsumerWidget {
                     // Avatar
                     CircleAvatar(
                       radius: 40,
-                      backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+                      backgroundColor:
+                          Theme.of(context).primaryColor.withOpacity(0.1),
                       child: Icon(
                         Icons.person,
                         size: 40,
@@ -39,7 +40,7 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Name and email
                     const Text(
                       'Explorer',
@@ -57,7 +58,7 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Stats row
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -72,7 +73,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Recent contributions
             Card(
               child: Column(
@@ -89,28 +90,28 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                   ),
                   const Divider(height: 1),
-                  
+
                   // Recent items list
                   ..._recentItems.map((item) => ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: item.color.withOpacity(0.2),
-                      child: Icon(
-                        item.icon,
-                        color: item.color,
-                        size: 20,
-                      ),
-                    ),
-                    title: Text(item.title),
-                    subtitle: Text(item.description),
-                    trailing: Text(
-                      item.timeAgo,
-                      style: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 12,
-                      ),
-                    ),
-                  )),
-                  
+                        leading: CircleAvatar(
+                          backgroundColor: item.color.withOpacity(0.2),
+                          child: Icon(
+                            item.icon,
+                            color: item.color,
+                            size: 20,
+                          ),
+                        ),
+                        title: Text(item.title),
+                        subtitle: Text(item.description),
+                        trailing: Text(
+                          item.timeAgo,
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 12,
+                          ),
+                        ),
+                      )),
+
                   // View all button
                   Padding(
                     padding: const EdgeInsets.all(16),
@@ -128,7 +129,7 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Profile actions
             Card(
               child: Column(
@@ -181,7 +182,8 @@ class ProfileScreen extends ConsumerWidget {
                         context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('Sign Out'),
-                          content: const Text('Are you sure you want to sign out?'),
+                          content:
+                              const Text('Are you sure you want to sign out?'),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(context).pop(),
@@ -193,7 +195,8 @@ class ProfileScreen extends ConsumerWidget {
                                 // TODO: Implement actual sign out
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Sign out functionality coming soon!'),
+                                    content: Text(
+                                        'Sign out functionality coming soon!'),
                                   ),
                                 );
                               },

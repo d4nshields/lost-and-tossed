@@ -10,17 +10,15 @@ class SupabaseService {
   SupabaseService({
     required SupabaseClient supabase,
     required Logger logger,
-  }) : _supabase = supabase, _logger = logger;
+  })  : _supabase = supabase,
+        _logger = logger;
 
   /// Get a user profile by ID (returns raw JSON for now)
   Future<Map<String, dynamic>?> getProfile(String userId) async {
     try {
-      final response = await _supabase
-          .from('users')
-          .select()
-          .eq('id', userId)
-          .maybeSingle();
-          
+      final response =
+          await _supabase.from('users').select().eq('id', userId).maybeSingle();
+
       return response;
     } catch (e, stackTrace) {
       _logger.e('Failed to get profile', error: e, stackTrace: stackTrace);
@@ -58,19 +56,17 @@ class SupabaseService {
   ) async {
     try {
       submissionData['user_id'] = userId;
-      
-      final response = await _supabase
-          .from('submissions')
-          .insert(submissionData)
-          .select('''
+
+      final response =
+          await _supabase.from('submissions').insert(submissionData).select('''
             *,
             user:users!user_id(id, handle)
-          ''')
-          .single();
-          
+          ''').single();
+
       return response;
     } catch (e, stackTrace) {
-      _logger.e('Failed to create submission', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to create submission',
+          error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -78,12 +74,10 @@ class SupabaseService {
   /// Delete a submission
   Future<void> deleteSubmission(String submissionId) async {
     try {
-      await _supabase
-          .from('submissions')
-          .delete()
-          .eq('id', submissionId);
+      await _supabase.from('submissions').delete().eq('id', submissionId);
     } catch (e, stackTrace) {
-      _logger.e('Failed to delete submission', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to delete submission',
+          error: e, stackTrace: stackTrace);
       rethrow;
     }
   }
@@ -97,7 +91,7 @@ class SupabaseService {
   }) async {
     try {
       final geohashPrefix = geohash.substring(0, precision);
-      
+
       final response = await _supabase
           .from('submissions')
           .select('''
@@ -111,7 +105,8 @@ class SupabaseService {
 
       return List<Map<String, dynamic>>.from(response);
     } catch (e, stackTrace) {
-      _logger.e('Failed to get submissions near location', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to get submissions near location',
+          error: e, stackTrace: stackTrace);
       rethrow;
     }
   }

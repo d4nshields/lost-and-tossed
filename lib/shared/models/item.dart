@@ -73,7 +73,7 @@ class Item {
   bool get hasImage => imageUrl?.isNotEmpty == true;
   bool get hasLocation => exactLat != null && exactLng != null;
   bool get isApproved => status == ModerationStatus.approved;
-  
+
   String get effectiveImageUrl => imageThumbnailUrl ?? imageUrl ?? '';
   int get effectiveLikeCount => likeCount ?? 0;
   int get effectiveCommentCount => commentCount ?? 0;
@@ -167,7 +167,7 @@ class CreateItemRequest {
     this.foundAt,
   });
 
-  factory CreateItemRequest.fromJson(Map<String, dynamic> json) => 
+  factory CreateItemRequest.fromJson(Map<String, dynamic> json) =>
       _$CreateItemRequestFromJson(json);
   Map<String, dynamic> toJson() => _$CreateItemRequestToJson(this);
 }

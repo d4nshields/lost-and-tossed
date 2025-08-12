@@ -21,7 +21,8 @@ void main() {
       await screenMatchesGolden(tester, 'explore_screen_light');
     });
 
-    testGoldens('explore screen renders correctly in dark mode', (tester) async {
+    testGoldens('explore screen renders correctly in dark mode',
+        (tester) async {
       await tester.pumpWidgetBuilder(
         const ProviderScope(
           child: ExploreScreen(),

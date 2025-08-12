@@ -10,7 +10,7 @@ class LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
       body: Center(
@@ -31,9 +31,9 @@ class LoadingScreen extends StatelessWidget {
                 color: theme.colorScheme.primary,
               ),
             ),
-            
+
             const SizedBox(height: AppTheme.spaceXl),
-            
+
             // App name
             Text(
               'Lost & Tossed',
@@ -42,9 +42,9 @@ class LoadingScreen extends StatelessWidget {
                 color: theme.colorScheme.primary,
               ),
             ),
-            
+
             const SizedBox(height: AppTheme.spaceSm),
-            
+
             // Tagline
             Text(
               AppStrings.appTagline,
@@ -53,18 +53,18 @@ class LoadingScreen extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             const SizedBox(height: AppTheme.spaceXl),
-            
+
             // Loading indicator
             CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(
                 theme.colorScheme.primary,
               ),
             ),
-            
+
             const SizedBox(height: AppTheme.spaceLg),
-            
+
             // Loading text
             Text(
               'Preparing your adventure...',

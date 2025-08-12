@@ -11,7 +11,7 @@ import 'package:logger/logger.dart';
 import '../../core/constants/app_constants.dart';
 
 /// Service for image processing, privacy protection, and optimization
-/// 
+///
 /// This service handles image capture, face/text detection for privacy,
 /// automatic blurring of sensitive information, and image optimization
 /// for upload and storage.
@@ -41,7 +41,8 @@ class ImageService {
     try {
       _logger.i('Image service initialized');
     } catch (e, stackTrace) {
-      _logger.e('Failed to initialize image service', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to initialize image service',
+          error: e, stackTrace: stackTrace);
     }
   }
 
@@ -67,7 +68,8 @@ class ImageService {
 
       return image;
     } catch (e, stackTrace) {
-      _logger.e('Failed to capture image from camera', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to capture image from camera',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -88,7 +90,8 @@ class ImageService {
 
       return image;
     } catch (e, stackTrace) {
-      _logger.e('Failed to pick image from gallery', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to pick image from gallery',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -101,7 +104,7 @@ class ImageService {
       // Read image file
       final bytes = await imageFile.readAsBytes();
       final originalImage = img.decodeImage(bytes);
-      
+
       if (originalImage == null) {
         _logger.e('Failed to decode image');
         return null;
@@ -145,8 +148,10 @@ class ImageService {
       );
 
       // Encode images
-      final processedBytes = Uint8List.fromList(img.encodeJpg(processedImage, quality: 85));
-      final thumbnailBytes = Uint8List.fromList(img.encodeJpg(thumbnail, quality: 80));
+      final processedBytes =
+          Uint8List.fromList(img.encodeJpg(processedImage, quality: 85));
+      final thumbnailBytes =
+          Uint8List.fromList(img.encodeJpg(thumbnail, quality: 80));
 
       // Check file size
       if (processedBytes.length > AppConstants.maxImageSizeBytes) {
@@ -154,11 +159,13 @@ class ImageService {
         final compressedImage = await _compressImage(processedImage);
         return ProcessedImage(
           originalBytes: bytes,
-          processedBytes: Uint8List.fromList(img.encodeJpg(compressedImage, quality: 70)),
+          processedBytes:
+              Uint8List.fromList(img.encodeJpg(compressedImage, quality: 70)),
           thumbnailBytes: thumbnailBytes,
           hasBlurredContent: hasBlurredContent,
           faceCount: faces.length,
-          sensitiveTextCount: textBlocks.where((t) => _isSensitiveText(t.text)).length,
+          sensitiveTextCount:
+              textBlocks.where((t) => _isSensitiveText(t.text)).length,
         );
       }
 
@@ -168,10 +175,12 @@ class ImageService {
         thumbnailBytes: thumbnailBytes,
         hasBlurredContent: hasBlurredContent,
         faceCount: faces.length,
-        sensitiveTextCount: textBlocks.where((t) => _isSensitiveText(t.text)).length,
+        sensitiveTextCount:
+            textBlocks.where((t) => _isSensitiveText(t.text)).length,
       );
     } catch (e, stackTrace) {
-      _logger.e('Failed to process image for privacy', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to process image for privacy',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -203,20 +212,20 @@ class ImageService {
   /// Check if text is potentially sensitive
   bool _isSensitiveText(String text) {
     final cleanText = text.trim().toUpperCase();
-    
+
     // License plate patterns (various formats)
     final licensePatterns = [
       RegExp(r'^[A-Z]{1,3}\s*\d{1,4}$'), // ABC 123
       RegExp(r'^\d{1,3}\s*[A-Z]{1,3}$'), // 123 ABC
       RegExp(r'^[A-Z0-9]{5,8}$'), // Mixed alphanumeric
     ];
-    
+
     for (final pattern in licensePatterns) {
       if (pattern.hasMatch(cleanText)) {
         return true;
       }
     }
-    
+
     // House numbers (simple numeric patterns)
     if (RegExp(r'^\d{1,5}[A-Z]?$').hasMatch(cleanText)) {
       final number = int.tryParse(cleanText.replaceAll(RegExp(r'[A-Z]'), ''));
@@ -224,17 +233,18 @@ class ImageService {
         return true;
       }
     }
-    
+
     // Phone numbers (basic patterns)
     if (RegExp(r'(\d{3}[-.\s]?\d{3}[-.\s]?\d{4})').hasMatch(cleanText)) {
       return true;
     }
-    
+
     // Email addresses
-    if (RegExp(r'\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b').hasMatch(cleanText)) {
+    if (RegExp(r'\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b')
+        .hasMatch(cleanText)) {
       return true;
     }
-    
+
     return false;
   }
 
@@ -246,16 +256,17 @@ class ImageService {
       final top = boundingBox.top.toInt().clamp(0, image.height - 1);
       final right = boundingBox.right.toInt().clamp(0, image.width);
       final bottom = boundingBox.bottom.toInt().clamp(0, image.height);
-      
+
       final width = (right - left).clamp(1, image.width - left);
       final height = (bottom - top).clamp(1, image.height - top);
-      
+
       // Extract the region
-      final region = img.copyCrop(image, x: left, y: top, width: width, height: height);
-      
+      final region =
+          img.copyCrop(image, x: left, y: top, width: width, height: height);
+
       // Apply blur
       final blurred = img.gaussianBlur(region, radius: 15);
-      
+
       // Composite back onto the original image
       img.compositeImage(image, blurred, dstX: left, dstY: top);
     } catch (e, stackTrace) {
@@ -269,7 +280,7 @@ class ImageService {
       // Calculate new dimensions (maintain aspect ratio)
       final aspectRatio = image.width / image.height;
       int newWidth, newHeight;
-      
+
       if (aspectRatio > 1) {
         // Landscape
         newWidth = (AppConstants.maxImageWidth * 0.8).toInt();
@@ -279,7 +290,7 @@ class ImageService {
         newHeight = (AppConstants.maxImageHeight * 0.8).toInt();
         newWidth = (newHeight * aspectRatio).toInt();
       }
-      
+
       return img.copyResize(
         image,
         width: newWidth,
@@ -298,11 +309,11 @@ class ImageService {
       // Decode the processed image
       final image = img.decodeImage(processedImage.processedBytes);
       if (image == null) throw Exception('Failed to decode processed image');
-      
+
       // Create a smaller preview (max 800px on longest side)
       final maxDimension = 800;
       final aspectRatio = image.width / image.height;
-      
+
       int previewWidth, previewHeight;
       if (image.width > image.height) {
         previewWidth = maxDimension;
@@ -311,17 +322,18 @@ class ImageService {
         previewHeight = maxDimension;
         previewWidth = (maxDimension * aspectRatio).toInt();
       }
-      
+
       final preview = img.copyResize(
         image,
         width: previewWidth,
         height: previewHeight,
         interpolation: img.Interpolation.cubic,
       );
-      
+
       return Uint8List.fromList(img.encodeJpg(preview, quality: 85));
     } catch (e, stackTrace) {
-      _logger.e('Failed to create preview image', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to create preview image',
+          error: e, stackTrace: stackTrace);
       return processedImage.thumbnailBytes; // Fallback to thumbnail
     }
   }
@@ -331,15 +343,16 @@ class ImageService {
     try {
       final bytes = await imageFile.readAsBytes();
       final image = img.decodeImage(bytes);
-      
+
       if (image == null) return null;
-      
+
       return ImageDimensions(
         width: image.width,
         height: image.height,
       );
     } catch (e, stackTrace) {
-      _logger.e('Failed to get image dimensions', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to get image dimensions',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -384,11 +397,13 @@ class ProcessedImage {
 
   String get privacySummary {
     if (!hasBlurredContent) return 'No sensitive content detected';
-    
+
     final items = <String>[];
     if (faceCount > 0) items.add('$faceCount face${faceCount == 1 ? '' : 's'}');
-    if (sensitiveTextCount > 0) items.add('$sensitiveTextCount sensitive text${sensitiveTextCount == 1 ? '' : 's'}');
-    
+    if (sensitiveTextCount > 0)
+      items.add(
+          '$sensitiveTextCount sensitive text${sensitiveTextCount == 1 ? '' : 's'}');
+
     return 'Blurred: ${items.join(', ')}';
   }
 

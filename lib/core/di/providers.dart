@@ -11,7 +11,7 @@ import '../../shared/services/simple_supabase_service.dart';
 import '../../shared/models/simple_models.dart';
 
 /// Core dependency injection providers
-/// 
+///
 /// This file centralizes all the core services and dependencies that
 /// are used throughout the app. By using Riverpod providers, we get
 /// automatic dependency injection, lifecycle management, and testing support.
@@ -77,7 +77,8 @@ final currentUserProvider = StreamProvider<User?>((ref) {
 });
 
 /// Current user profile provider (simplified)
-final currentUserProfileProvider = StreamProvider<Map<String, dynamic>?>((ref) async* {
+final currentUserProfileProvider =
+    StreamProvider<Map<String, dynamic>?>((ref) async* {
   final user = await ref.watch(currentUserProvider.future);
   if (user == null) {
     yield null;
@@ -95,27 +96,27 @@ final currentUserProfileProvider = StreamProvider<Map<String, dynamic>?>((ref) a
 });
 
 /// App initialization provider
-/// 
+///
 /// This provider handles the initialization of core services
 /// and ensures they're ready before the app starts.
 final appInitProvider = FutureProvider<void>((ref) async {
   final logger = ref.read(loggerProvider);
-  
+
   try {
     logger.i('App initialization started');
-    
+
     // Initialize location service
     final locationService = ref.read(locationServiceProvider);
     await locationService.initialize();
-    
+
     logger.i('Location service initialized');
-    
+
     // Initialize image service
     final imageService = ref.read(imageServiceProvider);
     await imageService.initialize();
-    
+
     logger.i('Image service initialized');
-    
+
     logger.i('App initialization completed successfully');
   } catch (e, stackTrace) {
     logger.e('App initialization failed', error: e, stackTrace: stackTrace);

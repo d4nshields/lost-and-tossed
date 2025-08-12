@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Item detail screen
 class ItemDetailScreen extends StatelessWidget {
   final String itemId;
-  
+
   const ItemDetailScreen({
     super.key,
     required this.itemId,

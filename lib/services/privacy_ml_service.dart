@@ -24,7 +24,7 @@ class PrivacyMLService {
         minFaceSize: 0.1, // Detect smaller faces
         performanceMode: FaceDetectorMode.accurate,
       );
-      
+
       _faceDetector = FaceDetector(options: faceDetectorOptions);
       _textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
     } catch (e) {
@@ -39,7 +39,7 @@ class PrivacyMLService {
   Future<List<FaceBlurArea>> detectFaces(InputImage inputImage) async {
     try {
       final faces = await _faceDetector.processImage(inputImage);
-      
+
       return faces.map((face) {
         final boundingBox = face.boundingBox;
         return FaceBlurArea(
@@ -65,13 +65,13 @@ class PrivacyMLService {
   Future<List<TextBlurArea>> detectSensitiveText(InputImage inputImage) async {
     try {
       final recognizedText = await _textRecognizer.processImage(inputImage);
-      
+
       final sensitiveAreas = <TextBlurArea>[];
-      
+
       for (final textBlock in recognizedText.blocks) {
         for (final line in textBlock.lines) {
           final text = line.text;
-          
+
           // Check for patterns that might be personal info
           if (_containsSensitiveInfo(text)) {
             final boundingBox = line.boundingBox;
@@ -86,7 +86,7 @@ class PrivacyMLService {
           }
         }
       }
-      
+
       return sensitiveAreas;
     } catch (e) {
       throw AppError.imageProcessing(
@@ -126,7 +126,7 @@ class PrivacyMLService {
         image,
         quality: (AppConstants.imageQuality * 100).toInt(),
       );
-      
+
       return Uint8List.fromList(blurredBytes);
     } catch (e) {
       throw AppError.imageProcessing(
@@ -139,29 +139,32 @@ class PrivacyMLService {
   /// Check if text contains sensitive information
   bool _containsSensitiveInfo(String text) {
     final lowerText = text.toLowerCase();
-    
+
     // License plate patterns (simple examples)
     final licensePatterns = [
       RegExp(r'[a-z]{3}\s?\d{3,4}', caseSensitive: false), // ABC 123
       RegExp(r'\d{3}\s?[a-z]{3}', caseSensitive: false), // 123 ABC
     ];
-    
+
     // Phone number patterns
     final phonePatterns = [
       RegExp(r'\(\d{3}\)\s?\d{3}-?\d{4}'), // (123) 456-7890
       RegExp(r'\d{3}-?\d{3}-?\d{4}'), // 123-456-7890
     ];
-    
+
     // Email patterns
-    final emailPattern = RegExp(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b');
-    
+    final emailPattern =
+        RegExp(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b');
+
     // Address patterns (house numbers)
-    final addressPattern = RegExp(r'\b\d{1,5}\s+\w+\s+(st|street|ave|avenue|rd|road|dr|drive|blvd|boulevard)', caseSensitive: false);
+    final addressPattern = RegExp(
+        r'\b\d{1,5}\s+\w+\s+(st|street|ave|avenue|rd|road|dr|drive|blvd|boulevard)',
+        caseSensitive: false);
 
     return licensePatterns.any((pattern) => pattern.hasMatch(text)) ||
-           phonePatterns.any((pattern) => pattern.hasMatch(text)) ||
-           emailPattern.hasMatch(text) ||
-           addressPattern.hasMatch(text);
+        phonePatterns.any((pattern) => pattern.hasMatch(text)) ||
+        emailPattern.hasMatch(text) ||
+        addressPattern.hasMatch(text);
   }
 
   /// Classify the type of sensitive text
@@ -172,10 +175,13 @@ class PrivacyMLService {
     if (RegExp(r'\d{3}-?\d{3}-?\d{4}').hasMatch(text)) {
       return SensitiveTextType.phoneNumber;
     }
-    if (RegExp(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b').hasMatch(text)) {
+    if (RegExp(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
+        .hasMatch(text)) {
       return SensitiveTextType.email;
     }
-    if (RegExp(r'\b\d{1,5}\s+\w+\s+(st|street|ave|avenue)', caseSensitive: false).hasMatch(text)) {
+    if (RegExp(r'\b\d{1,5}\s+\w+\s+(st|street|ave|avenue)',
+            caseSensitive: false)
+        .hasMatch(text)) {
       return SensitiveTextType.address;
     }
     return SensitiveTextType.other;

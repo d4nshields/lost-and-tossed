@@ -21,7 +21,7 @@ class AuthScreen extends ConsumerWidget {
                 color: Color(0xFF6B73FF),
               ),
               const SizedBox(height: 24),
-              
+
               // App title and tagline
               const Text(
                 'Lost & Tossed',
@@ -35,12 +35,12 @@ class AuthScreen extends ConsumerWidget {
               Text(
                 'A playful community field guide for documenting the world around us',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Colors.grey[600],
-                ),
+                      color: Colors.grey[600],
+                    ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 48),
-              
+
               // Sign in button
               FilledButton.icon(
                 onPressed: () {
@@ -55,7 +55,7 @@ class AuthScreen extends ConsumerWidget {
                 label: const Text('Sign In'),
               ),
               const SizedBox(height: 16),
-              
+
               // Anonymous exploration
               OutlinedButton.icon(
                 onPressed: () {
@@ -70,13 +70,13 @@ class AuthScreen extends ConsumerWidget {
                 label: const Text('Explore Anonymously'),
               ),
               const SizedBox(height: 32),
-              
+
               // Privacy note
               Text(
                 'We respect your privacy. Location data is coarse and optional. See our privacy policy for details.',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.grey[500],
-                ),
+                      color: Colors.grey[500],
+                    ),
                 textAlign: TextAlign.center,
               ),
             ],

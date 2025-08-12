@@ -34,7 +34,8 @@ class LocationService {
 
       if (permission == LocationPermission.deniedForever) {
         throw const AppError.permission(
-          message: 'Location permissions are permanently denied, we cannot request permissions.',
+          message:
+              'Location permissions are permanently denied, we cannot request permissions.',
           permission: 'location',
         );
       }
@@ -57,7 +58,7 @@ class LocationService {
   String encodeCoarseGeohash(double latitude, double longitude) {
     final geoHasher = GeoHasher();
     return geoHasher.encode(
-      longitude, 
+      longitude,
       latitude,
       precision: AppConstants.coarseGeohashPrecision,
     );
@@ -67,7 +68,7 @@ class LocationService {
   String encodeFineGeohash(double latitude, double longitude) {
     final geoHasher = GeoHasher();
     return geoHasher.encode(
-      longitude, 
+      longitude,
       latitude,
       precision: AppConstants.fineGeohashPrecision,
     );
@@ -92,9 +93,9 @@ class LocationService {
 
   /// Calculate distance between two points in meters
   double calculateDistance(
-    double lat1, 
-    double lon1, 
-    double lat2, 
+    double lat1,
+    double lon1,
+    double lat2,
     double lon2,
   ) {
     return Geolocator.distanceBetween(lat1, lon1, lat2, lon2);
@@ -108,15 +109,15 @@ class LocationService {
   /// Generate area query bounds for geohash searching
   /// This is useful for finding items within a certain radius
   List<String> getGeohashBounds(
-    double centerLat, 
-    double centerLon, 
+    double centerLat,
+    double centerLon,
     double radiusMeters,
   ) {
     // For simplicity, we'll use the center geohash and its neighbors
     // In a production app, you might want a more sophisticated approach
     final centerHash = encodeCoarseGeohash(centerLat, centerLon);
     final neighbors = getNeighbors(centerHash);
-    
+
     // Return the center and all neighbors for querying
     return [
       centerHash,
@@ -137,7 +138,8 @@ class GeohashLocation {
   final String geohash;
 
   @override
-  String toString() => 'GeohashLocation(lat: $latitude, lon: $longitude, hash: $geohash)';
+  String toString() =>
+      'GeohashLocation(lat: $latitude, lon: $longitude, hash: $geohash)';
 }
 
 // Riverpod providers

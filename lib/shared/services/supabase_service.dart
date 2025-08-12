@@ -4,7 +4,7 @@ import 'package:logger/logger.dart';
 import '../models/simple_models.dart';
 
 /// Service for Supabase database operations
-/// 
+///
 /// This service encapsulates all database operations using Supabase.
 /// It provides a clean interface for CRUD operations on all entities
 /// and handles error logging and type conversion.
@@ -15,10 +15,11 @@ class SupabaseService {
   SupabaseService({
     required SupabaseClient supabase,
     required Logger logger,
-  }) : _supabase = supabase, _logger = logger;
+  })  : _supabase = supabase,
+        _logger = logger;
 
   // Profile operations
-  
+
   /// Get a user profile by ID
   Future<Profile?> getProfile(String userId) async {
     try {
@@ -27,7 +28,7 @@ class SupabaseService {
           .select()
           .eq('id', userId)
           .maybeSingle();
-          
+
       if (response == null) return null;
       return Profile.fromJson(response);
     } catch (e, stackTrace) {
@@ -37,7 +38,8 @@ class SupabaseService {
   }
 
   /// Update a user profile
-  Future<Profile> updateProfile(String userId, Map<String, dynamic> updates) async {
+  Future<Profile> updateProfile(
+      String userId, Map<String, dynamic> updates) async {
     try {
       final response = await _supabase
           .from('profiles')
@@ -45,7 +47,7 @@ class SupabaseService {
           .eq('id', userId)
           .select()
           .single();
-          
+
       return Profile.fromJson(response);
     } catch (e, stackTrace) {
       _logger.e('Failed to update profile', error: e, stackTrace: stackTrace);
@@ -69,7 +71,7 @@ class SupabaseService {
           })
           .select()
           .single();
-          
+
       return Profile.fromJson(response);
     } catch (e, stackTrace) {
       _logger.e('Failed to create profile', error: e, stackTrace: stackTrace);
@@ -154,7 +156,7 @@ class SupabaseService {
 
       final response = await query.maybeSingle();
       if (response == null) return null;
-      
+
       return Item.fromJson(response);
     } catch (e, stackTrace) {
       _logger.e('Failed to get item', error: e, stackTrace: stackTrace);
@@ -168,15 +170,11 @@ class SupabaseService {
       final itemData = request.toJson();
       itemData['contributor_id'] = userId;
 
-      final response = await _supabase
-          .from('items')
-          .insert(itemData)
-          .select('''
+      final response = await _supabase.from('items').insert(itemData).select('''
             *,
             contributor:profiles!contributor_id(id, username, display_name, avatar_url)
-          ''')
-          .single();
-          
+          ''').single();
+
       return Item.fromJson(response);
     } catch (e, stackTrace) {
       _logger.e('Failed to create item', error: e, stackTrace: stackTrace);
@@ -194,9 +192,8 @@ class SupabaseService {
           .select('''
             *,
             contributor:profiles!contributor_id(id, username, display_name, avatar_url)
-          ''')
-          .single();
-          
+          ''').single();
+
       return Item.fromJson(response);
     } catch (e, stackTrace) {
       _logger.e('Failed to update item', error: e, stackTrace: stackTrace);
@@ -207,10 +204,7 @@ class SupabaseService {
   /// Delete an item
   Future<void> deleteItem(String itemId) async {
     try {
-      await _supabase
-          .from('items')
-          .delete()
-          .eq('id', itemId);
+      await _supabase.from('items').delete().eq('id', itemId);
     } catch (e, stackTrace) {
       _logger.e('Failed to delete item', error: e, stackTrace: stackTrace);
       rethrow;
@@ -222,14 +216,10 @@ class SupabaseService {
   /// Get comments for an item
   Future<List<Comment>> getComments(String itemId) async {
     try {
-      final response = await _supabase
-          .from('comments')
-          .select('''
+      final response = await _supabase.from('comments').select('''
             *,
             author:profiles!author_id(id, username, display_name, avatar_url)
-          ''')
-          .eq('item_id', itemId)
-          .order('created_at', ascending: true);
+          ''').eq('item_id', itemId).order('created_at', ascending: true);
 
       return response.map((json) => Comment.fromJson(json)).toList();
     } catch (e, stackTrace) {
@@ -239,20 +229,18 @@ class SupabaseService {
   }
 
   /// Create a new comment
-  Future<Comment> createComment(CreateCommentRequest request, String userId) async {
+  Future<Comment> createComment(
+      CreateCommentRequest request, String userId) async {
     try {
       final commentData = request.toJson();
       commentData['author_id'] = userId;
 
-      final response = await _supabase
-          .from('comments')
-          .insert(commentData)
-          .select('''
+      final response =
+          await _supabase.from('comments').insert(commentData).select('''
             *,
             author:profiles!author_id(id, username, display_name, avatar_url)
-          ''')
-          .single();
-          
+          ''').single();
+
       return Comment.fromJson(response);
     } catch (e, stackTrace) {
       _logger.e('Failed to create comment', error: e, stackTrace: stackTrace);
@@ -272,7 +260,7 @@ class SupabaseService {
             author:profiles!author_id(id, username, display_name, avatar_url)
           ''')
           .single();
-          
+
       return Comment.fromJson(response);
     } catch (e, stackTrace) {
       _logger.e('Failed to update comment', error: e, stackTrace: stackTrace);
@@ -283,10 +271,7 @@ class SupabaseService {
   /// Delete a comment
   Future<void> deleteComment(String commentId) async {
     try {
-      await _supabase
-          .from('comments')
-          .delete()
-          .eq('id', commentId);
+      await _supabase.from('comments').delete().eq('id', commentId);
     } catch (e, stackTrace) {
       _logger.e('Failed to delete comment', error: e, stackTrace: stackTrace);
       rethrow;
@@ -316,12 +301,10 @@ class SupabaseService {
         return false;
       } else {
         // Like
-        await _supabase
-            .from('likes')
-            .insert({
-              'item_id': itemId,
-              'user_id': userId,
-            });
+        await _supabase.from('likes').insert({
+          'item_id': itemId,
+          'user_id': userId,
+        });
         return true;
       }
     } catch (e, stackTrace) {
@@ -365,7 +348,8 @@ class SupabaseService {
   // Search operations
 
   /// Search items with full-text search
-  Future<List<Item>> searchItems(String query, {
+  Future<List<Item>> searchItems(
+    String query, {
     int limit = 20,
     int offset = 0,
     ItemCategory? category,
@@ -402,14 +386,15 @@ class SupabaseService {
   }
 
   /// Get items near a location (by geohash prefix)
-  Future<List<Item>> getItemsNearLocation(String geohash, {
+  Future<List<Item>> getItemsNearLocation(
+    String geohash, {
     int precision = 5,
     int limit = 20,
     int offset = 0,
   }) async {
     try {
       final geohashPrefix = geohash.substring(0, precision);
-      
+
       final response = await _supabase
           .from('items')
           .select('''
@@ -425,7 +410,8 @@ class SupabaseService {
 
       return response.map((json) => Item.fromJson(json)).toList();
     } catch (e, stackTrace) {
-      _logger.e('Failed to get items near location', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to get items near location',
+          error: e, stackTrace: stackTrace);
       rethrow;
     }
   }

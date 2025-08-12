@@ -26,10 +26,12 @@ class Profile {
     this.updatedAt,
   });
 
-  factory Profile.fromJson(Map<String, dynamic> json) => _$ProfileFromJson(json);
+  factory Profile.fromJson(Map<String, dynamic> json) =>
+      _$ProfileFromJson(json);
   Map<String, dynamic> toJson() => _$ProfileToJson(this);
 
-  String get effectiveDisplayName => displayName ?? username ?? 'Anonymous Explorer';
+  String get effectiveDisplayName =>
+      displayName ?? username ?? 'Anonymous Explorer';
 
   Profile copyWith({
     String? id,

@@ -7,7 +7,8 @@ import 'package:lost_and_tossed/features/explore/presentation/screens/explore_sc
 
 void main() {
   group('Explore Screen Tests', () {
-    testWidgets('should display app bar with title and actions', (tester) async {
+    testWidgets('should display app bar with title and actions',
+        (tester) async {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
@@ -51,7 +52,7 @@ void main() {
 
       // Verify grid is present
       expect(find.byType(SliverGrid), findsOneWidget);
-      
+
       // Verify some sample items are displayed
       expect(find.text('Solo Glove Adventure'), findsOneWidget);
       expect(find.text('Event Poster Survivor'), findsOneWidget);
@@ -69,19 +70,20 @@ void main() {
       // Find and tap the Tossed category chip
       final tossedChip = find.text('Tossed');
       expect(tossedChip, findsOneWidget);
-      
+
       await tester.tap(tossedChip);
       await tester.pump();
-      
+
       // In a real implementation, we would verify filter state change
       // For now, we just verify the tap doesn't crash
       expect(tester.takeException(), isNull);
     });
 
     group('Golden Tests', () {
-      testGoldens('should match golden file for explore screen', (tester) async {
+      testGoldens('should match golden file for explore screen',
+          (tester) async {
         await loadAppFonts();
-        
+
         await tester.pumpWidgetBuilder(
           const ExploreScreen(),
           wrapper: materialAppWrapper(
@@ -93,9 +95,10 @@ void main() {
         await screenMatchesGolden(tester, 'explore_screen');
       });
 
-      testGoldens('should match golden file for category chips', (tester) async {
+      testGoldens('should match golden file for category chips',
+          (tester) async {
         await loadAppFonts();
-        
+
         // Test just the category chips section
         await tester.pumpWidgetBuilder(
           Container(

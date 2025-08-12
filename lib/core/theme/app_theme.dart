@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 /// App theme configuration with playful, community-focused design
 class AppTheme {
   // Color palette inspired by found objects and community spaces
-  static const Color primaryGreen = Color(0xFF2D6B3E); // Forest green, like park signs
-  static const Color secondaryOrange = Color(0xFFF77F3A); // Safety orange, like construction cones
-  static const Color accentBlue = Color(0xFF4A90C2); // Sky blue, like lost balloons
+  static const Color primaryGreen =
+      Color(0xFF2D6B3E); // Forest green, like park signs
+  static const Color secondaryOrange =
+      Color(0xFFF77F3A); // Safety orange, like construction cones
+  static const Color accentBlue =
+      Color(0xFF4A90C2); // Sky blue, like lost balloons
   static const Color warmGray = Color(0xFF6B7280); // Concrete gray
   static const Color lightGray = Color(0xFFF3F4F6); // Paper white
   static const Color darkGray = Color(0xFF374151); // Charcoal
@@ -93,7 +96,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: errorRed, width: 1),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       chipTheme: ChipThemeData(
         backgroundColor: lightGray,
@@ -174,7 +178,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: primaryGreen, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         elevation: 8,

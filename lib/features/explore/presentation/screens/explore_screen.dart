@@ -67,7 +67,7 @@ class ExploreScreen extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           // Items grid
           SliverPadding(
             padding: const EdgeInsets.all(16),
@@ -81,7 +81,8 @@ class ExploreScreen extends ConsumerWidget {
               delegate: SliverChildBuilderDelegate(
                 (context, index) => _ItemCard(
                   title: _sampleTitles[index % _sampleTitles.length],
-                  description: _sampleDescriptions[index % _sampleDescriptions.length],
+                  description:
+                      _sampleDescriptions[index % _sampleDescriptions.length],
                   category: _sampleCategories[index % _sampleCategories.length],
                 ),
                 childCount: 20, // Placeholder count
@@ -148,7 +149,7 @@ class _ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categoryColor = AppTheme.getCategoryColor(category);
-    
+
     return Card(
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -167,7 +168,7 @@ class _ItemCard extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Content
           Expanded(
             flex: 2,

@@ -8,9 +8,10 @@ import 'package:lost_and_tossed/core/constants/app_constants.dart';
 
 void main() {
   group('LostAndTossedApp', () {
-    testWidgets('shows loading screen during initialization', (WidgetTester tester) async {
+    testWidgets('shows loading screen during initialization',
+        (WidgetTester tester) async {
       await tester.pumpWidget(const ProviderScope(child: LostAndTossedApp()));
-      
+
       // Should show loading screen initially
       expect(find.text('Lost & Tossed'), findsOneWidget);
       expect(find.text('Preparing your adventure...'), findsOneWidget);
@@ -19,9 +20,9 @@ void main() {
 
     testWidgets('applies correct theme', (WidgetTester tester) async {
       await tester.pumpWidget(const ProviderScope(child: LostAndTossedApp()));
-      
+
       final MaterialApp materialApp = tester.widget(find.byType(MaterialApp));
-      
+
       expect(materialApp.title, equals(AppConstants.appName));
       expect(materialApp.theme, equals(AppTheme.lightTheme));
       expect(materialApp.darkTheme, equals(AppTheme.darkTheme));
@@ -46,7 +47,8 @@ void main() {
     });
 
     test('getCategoryColor returns correct colors', () {
-      expect(AppTheme.getCategoryColor('lost'), equals(AppTheme.categoryColors['lost']));
+      expect(AppTheme.getCategoryColor('lost'),
+          equals(AppTheme.categoryColors['lost']));
       expect(AppTheme.getCategoryColor('invalid'), equals(AppTheme.warmGray));
     });
   });

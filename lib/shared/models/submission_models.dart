@@ -143,13 +143,14 @@ class SubmissionUrls {
     this.processed,
   });
 
-  factory SubmissionUrls.fromJson(Map<String, dynamic> json) => 
+  factory SubmissionUrls.fromJson(Map<String, dynamic> json) =>
       _$SubmissionUrlsFromJson(json);
   Map<String, dynamic> toJson() => _$SubmissionUrlsToJson(this);
 
   String get effectiveUrl => processed ?? original ?? thumbnail ?? '';
   String get effectiveThumbnail => thumbnail ?? processed ?? original ?? '';
-  bool get hasImages => original != null || processed != null || thumbnail != null;
+  bool get hasImages =>
+      original != null || processed != null || thumbnail != null;
 
   SubmissionUrls copyWith({
     String? original,
@@ -179,7 +180,7 @@ class SafetyFlags {
     this.reason,
   });
 
-  factory SafetyFlags.fromJson(Map<String, dynamic> json) => 
+  factory SafetyFlags.fromJson(Map<String, dynamic> json) =>
       _$SafetyFlagsFromJson(json);
   Map<String, dynamic> toJson() => _$SafetyFlagsToJson(this);
 
@@ -246,14 +247,15 @@ class Submission {
     this.user,
   });
 
-  factory Submission.fromJson(Map<String, dynamic> json) => _$SubmissionFromJson(json);
+  factory Submission.fromJson(Map<String, dynamic> json) =>
+      _$SubmissionFromJson(json);
   Map<String, dynamic> toJson() => _$SubmissionToJson(this);
 
   bool get hasLocation => lat != null && lon != null;
   bool get isVisible => safetyFlags?.isVisible ?? true;
   bool get isDisposed => disposed == true;
   bool get hasImages => urls.hasImages;
-  
+
   String get effectiveImageUrl => urls.effectiveUrl;
   String get effectiveThumbnailUrl => urls.effectiveThumbnail;
 
@@ -333,7 +335,7 @@ class CreateSubmissionRequest {
     required this.urls,
   });
 
-  factory CreateSubmissionRequest.fromJson(Map<String, dynamic> json) => 
+  factory CreateSubmissionRequest.fromJson(Map<String, dynamic> json) =>
       _$CreateSubmissionRequestFromJson(json);
   Map<String, dynamic> toJson() => _$CreateSubmissionRequestToJson(this);
 }
@@ -386,7 +388,7 @@ class SubmissionList {
     this.wordCount,
   });
 
-  factory SubmissionList.fromJson(Map<String, dynamic> json) => 
+  factory SubmissionList.fromJson(Map<String, dynamic> json) =>
       _$SubmissionListFromJson(json);
   Map<String, dynamic> toJson() => _$SubmissionListToJson(this);
 

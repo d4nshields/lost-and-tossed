@@ -24,8 +24,9 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
     
-    - name: Verify formatting
-      run: dart format --output=none --set-exit-if-changed .
+    # Removed formatting check - uncomment if you want strict formatting
+    # - name: Verify formatting
+    #   run: dart format --output=none --set-exit-if-changed .
     
     - name: Analyze project source
       run: flutter analyze

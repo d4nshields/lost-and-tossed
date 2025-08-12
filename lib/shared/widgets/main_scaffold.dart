@@ -5,7 +5,7 @@ import '../../core/router/app_router.dart';
 import '../../core/theme/app_theme.dart';
 
 /// Main scaffold with bottom navigation for the app
-/// 
+///
 /// This widget provides the main navigation structure with a bottom tab bar
 /// and handles navigation between the main sections of the app.
 class MainScaffold extends StatelessWidget {
@@ -28,7 +28,7 @@ class MainScaffold extends StatelessWidget {
 
   Widget _buildBottomNavigationBar(BuildContext context) {
     final currentRoute = RouteHelper.getCurrentRoute(context);
-    
+
     return BottomAppBar(
       shape: const CircularNotchedRectangle(),
       notchMargin: 8.0,
@@ -117,7 +117,7 @@ class _NavBarItem extends StatelessWidget {
     final theme = Theme.of(context);
     final activeColor = theme.colorScheme.primary;
     final inactiveColor = theme.colorScheme.onSurface.withOpacity(0.6);
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
@@ -155,7 +155,7 @@ class _MoreOptionsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Container(
       padding: const EdgeInsets.all(AppTheme.spaceLg),
       child: Column(
@@ -168,7 +168,6 @@ class _MoreOptionsSheet extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppTheme.spaceLg),
-          
           _MoreOption(
             icon: Icons.settings_outlined,
             title: 'Settings',
@@ -178,7 +177,6 @@ class _MoreOptionsSheet extends StatelessWidget {
               // TODO: Navigate to settings
             },
           ),
-          
           _MoreOption(
             icon: Icons.help_outline,
             title: 'Help & Support',
@@ -188,7 +186,6 @@ class _MoreOptionsSheet extends StatelessWidget {
               // TODO: Navigate to help
             },
           ),
-          
           _MoreOption(
             icon: Icons.info_outline,
             title: 'About Lost & Tossed',
@@ -198,7 +195,6 @@ class _MoreOptionsSheet extends StatelessWidget {
               _showAboutDialog(context);
             },
           ),
-          
           _MoreOption(
             icon: Icons.logout,
             title: 'Sign Out',
@@ -208,7 +204,6 @@ class _MoreOptionsSheet extends StatelessWidget {
               _confirmSignOut(context);
             },
           ),
-          
           SizedBox(height: MediaQuery.of(context).padding.bottom),
         ],
       ),
@@ -220,7 +215,8 @@ class _MoreOptionsSheet extends StatelessWidget {
       context: context,
       applicationName: 'Lost & Tossed',
       applicationVersion: '1.0.0',
-      applicationLegalese: '© 2024 Lost & Tossed. Made with curiosity and care.',
+      applicationLegalese:
+          '© 2024 Lost & Tossed. Made with curiosity and care.',
       children: [
         const SizedBox(height: 16),
         const Text(
@@ -271,7 +267,7 @@ class _MoreOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return ListTile(
       leading: Icon(
         icon,

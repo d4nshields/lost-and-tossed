@@ -31,7 +31,9 @@ class AppUser {
       avatarUrl: json['avatarUrl'],
       isAnonymous: json['isAnonymous'] ?? false,
       createdAt: DateTime.parse(json['createdAt']),
-      lastSeenAt: json['lastSeenAt'] != null ? DateTime.parse(json['lastSeenAt']) : null,
+      lastSeenAt: json['lastSeenAt'] != null
+          ? DateTime.parse(json['lastSeenAt'])
+          : null,
       contributionCount: json['contributionCount'] ?? 0,
       preferences: json['preferences'],
     );
@@ -58,7 +60,13 @@ class UserPreferences {
     this.enableNotifications = true,
     this.privateProfile = false,
     this.units = 'metric',
-    this.interestedCategories = const ['lost', 'tossed', 'posted', 'marked', 'curious'],
+    this.interestedCategories = const [
+      'lost',
+      'tossed',
+      'posted',
+      'marked',
+      'curious'
+    ],
   });
 
   final bool shareLocation;
@@ -73,8 +81,8 @@ class UserPreferences {
       enableNotifications: json['enableNotifications'] ?? true,
       privateProfile: json['privateProfile'] ?? false,
       units: json['units'] ?? 'metric',
-      interestedCategories: List<String>.from(json['interestedCategories'] ?? 
-        ['lost', 'tossed', 'posted', 'marked', 'curious']),
+      interestedCategories: List<String>.from(json['interestedCategories'] ??
+          ['lost', 'tossed', 'posted', 'marked', 'curious']),
     );
   }
 

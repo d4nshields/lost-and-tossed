@@ -11,7 +11,7 @@ import '../scaffold/app_scaffold.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final supabaseService = ref.watch(supabaseServiceProvider);
-  
+
   return GoRouter(
     initialLocation: '/explore',
     redirect: (context, state) {

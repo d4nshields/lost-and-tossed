@@ -42,7 +42,8 @@ void main() {
         const originalLon = -79.3832;
 
         // Encode first
-        final geohash = locationService.encodeCoarseGeohash(originalLat, originalLon);
+        final geohash =
+            locationService.encodeCoarseGeohash(originalLat, originalLon);
 
         // Then decode
         final location = locationService.decodeGeohash(geohash);
@@ -62,7 +63,7 @@ void main() {
 
         expect(coarseHash.length, 5);
         expect(fineHash.length, 7);
-        
+
         // Fine hash should start with coarse hash
         expect(fineHash, startsWith(coarseHash));
       });
@@ -76,7 +77,7 @@ void main() {
 
         expect(neighbors, isA<Map<String, String>>());
         expect(neighbors.length, greaterThan(0));
-        
+
         // Should include the original hash and its neighbors
         expect(neighbors.values, contains(testHash));
       });
@@ -90,7 +91,7 @@ void main() {
 
         expect(bounds, isA<List<String>>());
         expect(bounds.isNotEmpty, true);
-        
+
         // Should contain the center geohash
         final centerHash = locationService.encodeCoarseGeohash(lat, lon);
         expect(bounds, contains(centerHash));
@@ -160,12 +161,12 @@ void main() {
   group('dart_geohash Package Direct Tests', () {
     test('should work with GeoHasher class directly', () {
       final geoHasher = GeoHasher();
-      
+
       // Test encoding
       final encoded = geoHasher.encode(-79.3832, 43.6532, precision: 5);
       expect(encoded, isA<String>());
       expect(encoded.length, 5);
-      
+
       // Test decoding
       final decoded = geoHasher.decode(encoded);
       expect(decoded.latitude, closeTo(43.6532, 0.1));
@@ -174,11 +175,11 @@ void main() {
 
     test('should work with GeoHash class directly', () {
       final geoHash = GeoHash.fromDecimalDegrees(-79.3832, 43.6532);
-      
+
       expect(geoHash.geohash, isA<String>());
       expect(geoHash.latitude(), closeTo(43.6532, 0.1));
       expect(geoHash.longitude(), closeTo(-79.3832, 0.1));
-      
+
       // Test neighbors
       final neighbors = geoHash.neighbors;
       expect(neighbors, isA<Map>());

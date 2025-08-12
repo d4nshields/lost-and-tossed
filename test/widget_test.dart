@@ -24,7 +24,8 @@ void main() {
       expect(find.text('Lost & Tossed'), findsOneWidget);
     });
 
-    testWidgets('App should have proper theme configuration', (WidgetTester tester) async {
+    testWidgets('App should have proper theme configuration',
+        (WidgetTester tester) async {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
@@ -47,14 +48,14 @@ void main() {
     test('should have valid app information', () {
       const appName = 'Lost & Tossed';
       const appVersion = '1.0.0';
-      
+
       expect(appName.isNotEmpty, true);
       expect(appVersion.isNotEmpty, true);
     });
 
     test('should have valid category list', () {
       const categories = ['lost', 'tossed', 'posted', 'marked', 'curious'];
-      
+
       expect(categories.length, 5);
       expect(categories.contains('lost'), true);
       expect(categories.contains('curious'), true);

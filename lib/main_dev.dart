@@ -9,17 +9,17 @@ import 'core/theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // TODO: Uncomment when Supabase is configured
   // Load environment variables
   // await dotenv.load(fileName: '.env');
-  
+
   // Initialize Supabase
   // await Supabase.initialize(
   //   url: dotenv.env['SUPABASE_URL']!,
   //   anonKey: dotenv.env['SUPABASE_ANON_KEY']!,
   // );
-  
+
   runApp(
     const ProviderScope(
       child: LostAndTossedApp(),
@@ -33,7 +33,7 @@ class LostAndTossedApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterDevProvider);
-    
+
     return MaterialApp.router(
       title: 'Lost & Tossed',
       theme: AppTheme.light,

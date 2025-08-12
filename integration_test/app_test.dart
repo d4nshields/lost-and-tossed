@@ -9,7 +9,8 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('App Navigation Flow', () {
-    testWidgets('should navigate between main tabs', (WidgetTester tester) async {
+    testWidgets('should navigate between main tabs',
+        (WidgetTester tester) async {
       // Start the app
       app.main();
       await tester.pumpAndSettle();
@@ -19,7 +20,7 @@ void main() {
 
       // Should show loading screen initially
       expect(find.text('Preparing your adventure...'), findsOneWidget);
-      
+
       // Wait longer for potential initialization
       await tester.pumpAndSettle(const Duration(seconds: 10));
 
@@ -32,7 +33,7 @@ void main() {
     testWidgets('complete item capture workflow', (WidgetTester tester) async {
       // This test will be implemented once we have:
       // 1. Authentication mocking
-      // 2. Camera permission mocking  
+      // 2. Camera permission mocking
       // 3. Location service mocking
       // 4. Image processing mocking
 

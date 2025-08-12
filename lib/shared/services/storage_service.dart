@@ -8,7 +8,7 @@ import '../../core/constants/app_constants.dart';
 import 'image_service.dart';
 
 /// Service for Supabase Storage operations
-/// 
+///
 /// This service handles file uploads to Supabase Storage buckets,
 /// including image optimization, thumbnail generation, and URL management.
 class StorageService {
@@ -19,9 +19,9 @@ class StorageService {
   StorageService({
     required SupabaseClient supabase,
     required Logger logger,
-  }) : _supabase = supabase,
-       _logger = logger,
-       _uuid = const Uuid();
+  })  : _supabase = supabase,
+        _logger = logger,
+        _uuid = const Uuid();
 
   /// Upload processed image and thumbnail for an item
   Future<ItemImageUrls?> uploadItemImage(
@@ -65,7 +65,8 @@ class StorageService {
         return null;
       }
 
-      _logger.i('Successfully uploaded item images: $imagePath, $thumbnailPath');
+      _logger
+          .i('Successfully uploaded item images: $imagePath, $thumbnailPath');
 
       return ItemImageUrls(
         imageUrl: imageUrl,
@@ -74,7 +75,8 @@ class StorageService {
         thumbnailPath: thumbnailPath,
       );
     } catch (e, stackTrace) {
-      _logger.e('Failed to upload item image', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to upload item image',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -103,7 +105,8 @@ class StorageService {
 
       return avatarUrl;
     } catch (e, stackTrace) {
-      _logger.e('Failed to upload profile avatar', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to upload profile avatar',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -122,21 +125,23 @@ class StorageService {
 
       // Upload file
       await _supabase.storage.from(bucketName).uploadBinary(
-        filePath,
-        fileBytes,
-        fileOptions: FileOptions(
-          contentType: contentType,
-          upsert: false,
-        ),
-      );
+            filePath,
+            fileBytes,
+            fileOptions: FileOptions(
+              contentType: contentType,
+              upsert: false,
+            ),
+          );
 
       // Get public URL
-      final publicUrl = _supabase.storage.from(bucketName).getPublicUrl(filePath);
-      
+      final publicUrl =
+          _supabase.storage.from(bucketName).getPublicUrl(filePath);
+
       _logger.d('File uploaded successfully: $publicUrl');
       return publicUrl;
     } catch (e, stackTrace) {
-      _logger.e('Failed to upload file to $bucketName/$filePath', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to upload file to $bucketName/$filePath',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -148,7 +153,8 @@ class StorageService {
       _logger.d('File deleted successfully: $bucketName/$filePath');
       return true;
     } catch (e, stackTrace) {
-      _logger.e('Failed to delete file $bucketName/$filePath', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to delete file $bucketName/$filePath',
+          error: e, stackTrace: stackTrace);
       return false;
     }
   }
@@ -170,7 +176,8 @@ class StorageService {
 
       return success;
     } catch (e, stackTrace) {
-      _logger.e('Failed to delete item images', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to delete item images',
+          error: e, stackTrace: stackTrace);
       return false;
     }
   }
@@ -181,7 +188,7 @@ class StorageService {
       // Extract file path from URL
       final uri = Uri.parse(avatarUrl);
       final pathSegments = uri.pathSegments;
-      
+
       // Find the bucket and file path
       final bucketIndex = pathSegments.indexOf('object');
       if (bucketIndex == -1 || bucketIndex + 2 >= pathSegments.length) {
@@ -194,7 +201,8 @@ class StorageService {
 
       return await _deleteFile(bucketName, filePath);
     } catch (e, stackTrace) {
-      _logger.e('Failed to delete profile avatar', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to delete profile avatar',
+          error: e, stackTrace: stackTrace);
       return false;
     }
   }
@@ -208,7 +216,7 @@ class StorageService {
 
       if (!bucketExists) {
         _logger.i('Creating storage bucket: $bucketName');
-        
+
         // Create bucket with public access
         await _supabase.storage.createBucket(
           bucketName,
@@ -222,23 +230,27 @@ class StorageService {
         _logger.i('Storage bucket created successfully: $bucketName');
       }
     } catch (e, stackTrace) {
-      _logger.e('Failed to ensure bucket exists: $bucketName', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to ensure bucket exists: $bucketName',
+          error: e, stackTrace: stackTrace);
       // Don't rethrow - continue with upload attempt
     }
   }
 
   /// Get signed URL for private access (if needed in future)
-  Future<String?> getSignedUrl(String bucketName, String filePath, {
+  Future<String?> getSignedUrl(
+    String bucketName,
+    String filePath, {
     Duration expiresIn = const Duration(hours: 1),
   }) async {
     try {
       final signedUrl = await _supabase.storage
           .from(bucketName)
           .createSignedUrl(filePath, expiresIn.inSeconds);
-      
+
       return signedUrl;
     } catch (e, stackTrace) {
-      _logger.e('Failed to create signed URL', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to create signed URL',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -256,8 +268,8 @@ class StorageService {
           .list(path: 'avatars');
 
       // Filter avatar files for this user
-      final userAvatars = avatarFiles.where((file) => 
-          file.name.startsWith(userId)).toList();
+      final userAvatars =
+          avatarFiles.where((file) => file.name.startsWith(userId)).toList();
 
       // Calculate total size
       int totalSize = 0;
@@ -284,7 +296,8 @@ class StorageService {
         avatarCount: userAvatars.length,
       );
     } catch (e, stackTrace) {
-      _logger.e('Failed to get storage stats', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to get storage stats',
+          error: e, stackTrace: stackTrace);
       return null;
     }
   }
@@ -294,22 +307,23 @@ class StorageService {
     Duration maxAge = const Duration(days: 30),
   }) async {
     try {
-      _logger.i('Starting cleanup of old files older than ${maxAge.inDays} days');
-      
+      _logger
+          .i('Starting cleanup of old files older than ${maxAge.inDays} days');
+
       final cutoffTime = DateTime.now().subtract(maxAge);
-      
+
       // This would require more sophisticated logic to parse file timestamps
       // and determine which files are safe to delete. For now, we'll just log.
       _logger.i('Cleanup would remove files older than $cutoffTime');
-      
+
       // Implementation would involve:
       // 1. List all files in buckets
       // 2. Parse timestamps from filenames or metadata
       // 3. Delete files older than cutoff
       // 4. Clean up orphaned database references
-      
     } catch (e, stackTrace) {
-      _logger.e('Failed to cleanup old files', error: e, stackTrace: stackTrace);
+      _logger.e('Failed to cleanup old files',
+          error: e, stackTrace: stackTrace);
     }
   }
 
@@ -318,7 +332,7 @@ class StorageService {
     try {
       final uri = Uri.parse(publicUrl);
       final pathSegments = uri.pathSegments;
-      
+
       // Find the object path in the URL
       final objectIndex = pathSegments.indexOf('object');
       if (objectIndex == -1 || objectIndex + 2 >= pathSegments.length) {
