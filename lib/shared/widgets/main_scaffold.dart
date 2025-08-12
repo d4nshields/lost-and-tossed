@@ -27,8 +27,6 @@ class MainScaffold extends StatelessWidget {
   }
 
   Widget _buildBottomNavigationBar(BuildContext context) {
-    final currentRoute = RouteHelper.getCurrentRoute(context);
-
     return BottomAppBar(
       shape: const CircularNotchedRectangle(),
       notchMargin: 8.0,

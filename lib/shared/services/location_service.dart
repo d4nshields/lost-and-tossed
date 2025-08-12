@@ -150,7 +150,7 @@ class LocationService {
         longitude: position.longitude,
         geohash: geohash,
         accuracy: position.accuracy,
-        timestamp: position.timestamp ?? DateTime.now(),
+        timestamp: position.timestamp,
       );
     } catch (e, stackTrace) {
       _logger.e('Failed to get current location data',

@@ -138,8 +138,6 @@ class PrivacyMLService {
 
   /// Check if text contains sensitive information
   bool _containsSensitiveInfo(String text) {
-    final lowerText = text.toLowerCase();
-
     // License plate patterns (simple examples)
     final licensePatterns = [
       RegExp(r'[a-z]{3}\s?\d{3,4}', caseSensitive: false), // ABC 123

@@ -116,7 +116,6 @@ class StorageService {
     required String filePath,
     required Uint8List fileBytes,
     required String contentType,
-    Map<String, String>? metadata,
   }) async {
     try {
       // Ensure bucket exists
