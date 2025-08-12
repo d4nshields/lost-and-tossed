@@ -36,8 +36,23 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+    
+    // Explicitly enable AndroidX to resolve dependency conflicts
+    packagingOptions {
+        pickFirst '**/libc++_shared.so'
+        pickFirst '**/libjsc.so'
+    }
 }
 
 flutter {
     source = "../.."
+}
+
+// Force AndroidX usage
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'androidx.core' && details.requested.name == 'core') {
+            details.useVersion '1.13.1'
+        }
+    }
 }
