@@ -1,8 +1,7 @@
 import 'dart:typed_data';
-import 'package:supabase/supabase.dart' hide Provider;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:logger/logger.dart';
 import 'package:uuid/uuid.dart';
-import 'package:path/path.dart' as path;
 
 import '../../core/constants/app_constants.dart';
 import 'image_service.dart';

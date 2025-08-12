@@ -1,4 +1,4 @@
-import 'package:supabase/supabase.dart' hide Provider;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:logger/logger.dart';
 
 /// Minimal Supabase service for basic operations

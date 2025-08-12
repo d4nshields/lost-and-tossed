@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase/supabase.dart' hide Provider;
-import 'package:geolocator/geolocator.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:logger/logger.dart';
 
 import '../constants/app_constants.dart';
@@ -8,7 +7,6 @@ import '../../shared/services/location_service.dart';
 import '../../shared/services/image_service.dart';
 import '../../shared/services/storage_service.dart';
 import '../../shared/services/simple_supabase_service.dart';
-import '../../shared/models/simple_models.dart';
 
 /// Core dependency injection providers
 ///

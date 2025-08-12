@@ -46,7 +46,6 @@ dependencies:
   permission_handler: ^11.0.1
   share_plus: ^7.2.1
   uuid: ^4.1.0
-  json_annotation: ^4.9.0
   
   # Logging & Analytics
   logger: ^2.0.2+1
