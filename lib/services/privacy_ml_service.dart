@@ -8,10 +8,10 @@ import '../core/errors/app_error.dart';
 import '../core/constants/app_constants.dart';
 
 class PrivacyMLService {
-  const PrivacyMLService();
+  PrivacyMLService();
 
-  late final FaceDetector _faceDetector;
-  late final TextRecognizer _textRecognizer;
+  FaceDetector? _faceDetector;
+  TextRecognizer? _textRecognizer;
 
   /// Initialize ML Kit detectors
   Future<void> initialize() async {
@@ -38,7 +38,7 @@ class PrivacyMLService {
   /// Detect faces in image and return bounding boxes for blurring
   Future<List<FaceBlurArea>> detectFaces(InputImage inputImage) async {
     try {
-      final faces = await _faceDetector.processImage(inputImage);
+      final faces = await _faceDetector?.processImage(inputImage) ?? [];
 
       return faces.map((face) {
         final boundingBox = face.boundingBox;
@@ -64,7 +64,7 @@ class PrivacyMLService {
   /// Detect text that might contain personal information
   Future<List<TextBlurArea>> detectSensitiveText(InputImage inputImage) async {
     try {
-      final recognizedText = await _textRecognizer.processImage(inputImage);
+      final recognizedText = await _textRecognizer?.processImage(inputImage) ?? RecognizedText(text: '', blocks: []);
 
       final sensitiveAreas = <TextBlurArea>[];
 
@@ -212,8 +212,8 @@ class PrivacyMLService {
 
   /// Clean up resources
   Future<void> dispose() async {
-    await _faceDetector.close();
-    await _textRecognizer.close();
+    await _faceDetector?.close();
+    await _textRecognizer?.close();
   }
 }
 
@@ -262,5 +262,5 @@ enum SensitiveTextType {
 
 // Riverpod provider
 final privacyMLServiceProvider = Provider<PrivacyMLService>((ref) {
-  return const PrivacyMLService();
+  return PrivacyMLService();
 });

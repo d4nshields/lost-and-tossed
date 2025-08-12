@@ -79,8 +79,8 @@ class LocationService {
     final geoHasher = GeoHasher();
     final decoded = geoHasher.decode(geohash);
     return GeohashLocation(
-      latitude: decoded.latitude,
-      longitude: decoded.longitude,
+      latitude: decoded[1], // latitude is at index 1
+      longitude: decoded[0], // longitude is at index 0
       geohash: geohash,
     );
   }

@@ -13,7 +13,7 @@ void main() {
       // Start the app
       // Note: This will need environment setup for Supabase
       await tester.pumpWidget(
-        const ProviderScope(
+        ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: Center(
@@ -44,7 +44,7 @@ void main() {
 
     testWidgets('Navigation between screens should work', (tester) async {
       await tester.pumpWidget(
-        const ProviderScope(
+        ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               bottomNavigationBar: BottomNavigationBar(

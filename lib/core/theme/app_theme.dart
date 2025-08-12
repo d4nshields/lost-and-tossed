@@ -28,6 +28,21 @@ class AppTheme {
     'curious': Color(0xFFF59E0B), // Amber
   };
 
+  // Category-specific color getters
+  static Color getCategoryColor(String category) {
+    return categoryColors[category.toLowerCase()] ?? primaryGreen;
+  }
+  
+  // Individual color getters for backward compatibility
+  static Color get lostColor => categoryColors['lost']!;
+  static Color get tossedColor => categoryColors['tossed']!;
+  static Color get postedColor => categoryColors['posted']!;
+  static Color get markedColor => categoryColors['marked']!;
+  static Color get curiousColor => categoryColors['curious']!;
+
+  static ThemeData get light => lightTheme;
+  static ThemeData get dark => darkTheme;
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
@@ -266,10 +281,6 @@ class AppTheme {
   static const double radius2xl = 24.0;
 
   // Helper methods
-  static Color getCategoryColor(String category) {
-    return categoryColors[category] ?? warmGray;
-  }
-
   static Color getCategoryColorWithOpacity(String category, double opacity) {
     return getCategoryColor(category).withOpacity(opacity);
   }

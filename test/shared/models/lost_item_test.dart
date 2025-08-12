@@ -4,86 +4,87 @@ import 'package:lost_and_tossed/shared/models/lost_item.dart';
 void main() {
   group('LostItemCategory Tests', () {
     test('should have correct names for all categories', () {
-      expect(const LostItemCategory.lost().name, 'Lost');
-      expect(const LostItemCategory.tossed().name, 'Tossed');
-      expect(const LostItemCategory.posted().name, 'Posted');
-      expect(const LostItemCategory.marked().name, 'Marked');
-      expect(const LostItemCategory.curious().name, 'Curious');
+      expect(LostItemCategory.lost.name, 'Lost');
+      expect(LostItemCategory.tossed.name, 'Tossed');
+      expect(LostItemCategory.posted.name, 'Posted');
+      expect(LostItemCategory.marked.name, 'Marked');
+      expect(LostItemCategory.curious.name, 'Curious');
     });
 
     test('should have correct descriptions for all categories', () {
       expect(
-        const LostItemCategory.lost().description,
+        LostItemCategory.lost.description,
         'Unintentionally left behind',
       );
       expect(
-        const LostItemCategory.tossed().description,
+        LostItemCategory.tossed.description,
         'Deliberately discarded',
       );
       expect(
-        const LostItemCategory.posted().description,
+        LostItemCategory.posted.description,
         'Intended for display',
       );
       expect(
-        const LostItemCategory.marked().description,
+        LostItemCategory.marked.description,
         'Non-removable markings',
       );
       expect(
-        const LostItemCategory.curious().description,
+        LostItemCategory.curious.description,
         'Odd or unclassifiable',
       );
     });
 
     test('should have playful descriptions for all categories', () {
       expect(
-        const LostItemCategory.lost().playfulDescription,
+        LostItemCategory.lost.playfulDescription,
         'A glove begins its solo adventure.',
       );
       expect(
-        const LostItemCategory.tossed().playfulDescription,
+        LostItemCategory.tossed.playfulDescription,
         'The snack that left only a clue.',
       );
       expect(
-        const LostItemCategory.posted().playfulDescription,
+        LostItemCategory.posted.playfulDescription,
         'Poster\'s still here, but the event is long gone.',
       );
       expect(
-        const LostItemCategory.marked().playfulDescription,
+        LostItemCategory.marked.playfulDescription,
         'Someone\'s creative mark on the world.',
       );
       expect(
-        const LostItemCategory.curious().playfulDescription,
+        LostItemCategory.curious.playfulDescription,
         'What story does this tell?',
       );
     });
 
-    test('should support equality comparison', () {
-      const category1 = LostItemCategory.lost();
-      const category2 = LostItemCategory.lost();
-      const category3 = LostItemCategory.tossed();
+    test('should work with all enum values', () {
+      const categories = LostItemCategory.values;
+      expect(categories.length, 5);
 
-      expect(category1, equals(category2));
-      expect(category1, isNot(equals(category3)));
+      for (final category in categories) {
+        expect(category.name, isA<String>());
+        expect(category.description, isA<String>());
+        expect(category.playfulDescription, isA<String>());
+      }
     });
   });
 
   group('LicenseType Tests', () {
-    test('should have correct JSON values', () {
-      // This will work once the models are generated
-      // For now, we test the enum values exist
+    test('should have correct enum values', () {
       expect(LicenseType.ccByNc, isNotNull);
       expect(LicenseType.cc0, isNotNull);
+      expect(LicenseType.values.length, 2);
     });
   });
 
   group('LostItem Tests', () {
     test('should create valid LostItem instance', () {
       final testDate = DateTime.now();
-      const testItem = LostItem(
+      final testItem = LostItem(
         id: 'test-123',
         title: 'Test Item',
         description: 'A test item for testing',
-        category: LostItemCategory.lost(),
+        category: LostItemCategory.lost,
         imageUrl: 'https://example.com/image.jpg',
         geohash: 'gbsuv7',
         createdAt: testDate,
@@ -92,17 +93,17 @@ void main() {
 
       expect(testItem.id, 'test-123');
       expect(testItem.title, 'Test Item');
-      expect(testItem.category, const LostItemCategory.lost());
+      expect(testItem.category, LostItemCategory.lost);
       expect(testItem.license, LicenseType.ccByNc); // Default value
     });
 
     test('should support custom license type', () {
       final testDate = DateTime.now();
-      const testItem = LostItem(
+      final testItem = LostItem(
         id: 'test-123',
         title: 'Test Item',
         description: 'A test item for testing',
-        category: LostItemCategory.curious(),
+        category: LostItemCategory.curious,
         imageUrl: 'https://example.com/image.jpg',
         geohash: 'gbsuv7',
         createdAt: testDate,
@@ -111,6 +112,54 @@ void main() {
       );
 
       expect(testItem.license, LicenseType.cc0);
+    });
+
+    test('should serialize to/from JSON correctly', () {
+      final testDate = DateTime.parse('2024-01-01T12:00:00Z');
+      final item = LostItem(
+        id: 'test-id',
+        title: 'Test Glove',
+        description: 'A lonely glove on the sidewalk',
+        category: LostItemCategory.lost,
+        imageUrl: 'https://example.com/glove.jpg',
+        geohash: 'gbsuv',
+        createdAt: testDate,
+        createdBy: 'user123',
+        license: LicenseType.ccByNc,
+      );
+
+      final json = item.toJson();
+      expect(json['category'], 'lost');
+      expect(json['license'], 'ccByNc');
+
+      final recreated = LostItem.fromJson(json);
+      expect(recreated.category, LostItemCategory.lost);
+      expect(recreated.license, LicenseType.ccByNc);
+      expect(recreated.title, 'Test Glove');
+    });
+
+    test('should handle missing license gracefully', () {
+      final testDate = DateTime.parse('2024-01-01T12:00:00Z');
+      final item = LostItem(
+        id: 'test-id',
+        title: 'Test Item',
+        description: 'Description',
+        category: LostItemCategory.curious,
+        imageUrl: 'https://example.com/image.jpg',
+        geohash: 'gbsuv',
+        createdAt: testDate,
+        createdBy: 'user123',
+      );
+
+      // Default license should be ccByNc
+      expect(item.license, LicenseType.ccByNc);
+
+      final json = item.toJson();
+      // Remove license from JSON to test default behavior
+      json.remove('license');
+
+      final recreated = LostItem.fromJson(json);
+      expect(recreated.license, LicenseType.ccByNc); // Should default to ccByNc
     });
   });
 }

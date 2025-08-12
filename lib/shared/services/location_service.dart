@@ -1,5 +1,5 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:geohash_plus/geohash_plus.dart';
+import 'package:dart_geohash/dart_geohash.dart';
 import 'package:logger/logger.dart';
 
 import '../../core/constants/app_constants.dart';
@@ -108,9 +108,10 @@ class LocationService {
   String generateGeohash(double latitude, double longitude,
       {int precision = 5}) {
     try {
-      final geohash = GeoHash.encode(latitude, longitude, precision: precision);
-      _logger.d('Generated geohash: ${geohash.hash} for $latitude, $longitude');
-      return geohash.hash;
+      final geoHasher = GeoHasher();
+      final geohash = geoHasher.encode(longitude, latitude, precision: precision);
+      _logger.d('Generated geohash: $geohash for $latitude, $longitude');
+      return geohash;
     } catch (e, stackTrace) {
       _logger.e('Failed to generate geohash', error: e, stackTrace: stackTrace);
       rethrow;

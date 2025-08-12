@@ -169,8 +169,8 @@ void main() {
 
       // Test decoding
       final decoded = geoHasher.decode(encoded);
-      expect(decoded.latitude, closeTo(43.6532, 0.1));
-      expect(decoded.longitude, closeTo(-79.3832, 0.1));
+      expect(decoded[1], closeTo(43.6532, 0.1)); // latitude is at index 1
+      expect(decoded[0], closeTo(-79.3832, 0.1)); // longitude is at index 0
     });
 
     test('should work with GeoHash class directly', () {

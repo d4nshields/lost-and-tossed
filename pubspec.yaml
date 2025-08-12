@@ -23,12 +23,12 @@ dependencies:
     sdk: flutter
     
   # Supabase
-  supabase: ^1.11.11
+  supabase_flutter: ^2.3.4
   
   # Location & Maps
   geolocator: ^10.1.0
   latlong2: ^0.8.1
-  geohash_plus: ^1.0.2
+  dart_geohash: ^2.1.0
   
   # Image handling & ML
   image_picker: ^1.0.4
@@ -66,6 +66,7 @@ dev_dependencies:
   
   # Testing
   mocktail: ^1.0.1
+  golden_toolkit: ^0.15.0
   integration_test:
     sdk: flutter
 

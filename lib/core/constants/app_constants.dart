@@ -17,6 +17,8 @@ class AppConstants {
 
   // Geohash precision (5 = ~152m x 152m grid)
   static const int geohashPrecision = 5;
+  static const int coarseGeohashPrecision = 5;
+  static const int fineGeohashPrecision = 7;
 
   // Image constraints
   static const int maxImageSizeBytes = 5 * 1024 * 1024; // 5MB
@@ -24,6 +26,7 @@ class AppConstants {
   static const int thumbnailHeight = 300;
   static const int maxImageWidth = 1920;
   static const int maxImageHeight = 1920;
+  static const double imageQuality = 0.8;
 
   // Pagination
   static const int defaultPageSize = 20;
@@ -38,7 +41,9 @@ class AppConstants {
 
   // Location accuracy
   static const double locationAccuracyMeters = 100.0;
+  static const double locationAccuracyThreshold = 100.0;
   static const Duration locationTimeoutDuration = Duration(seconds: 30);
+  static const int locationTimeoutSeconds = 30;
 
   // Cache durations
   static const Duration itemCacheDuration = Duration(minutes: 15);

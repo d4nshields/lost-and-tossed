@@ -91,36 +91,37 @@ class SupabaseService {
     String? userId,
   }) async {
     try {
-      var query = _supabase
+      // Start with base query
+      var queryBuilder = _supabase
           .from('items')
-          .select('''
-            *,
-            contributor:profiles!contributor_id(id, username, display_name, avatar_url),
-            like_count:likes(count),
-            comment_count:comments(count)
-          ''')
-          .eq('status', 'approved')
-          .order('created_at', ascending: false)
-          .range(offset, offset + limit - 1);
+          .select('*');
 
+      // Apply filters
+      queryBuilder = queryBuilder.eq('status', 'approved');
+      
       if (category != null) {
-        query = query.eq('category', category.value);
+        queryBuilder = queryBuilder.eq('category', category.value);
       }
 
       if (geohash != null) {
-        query = query.like('geohash', '$geohash%');
+        queryBuilder = queryBuilder.ilike('geohash', '$geohash%');
       }
 
       if (search != null && search.isNotEmpty) {
-        query = query.textSearch('search_vector', search);
+        // Use ilike for basic text search instead of textSearch
+        queryBuilder = queryBuilder.or('title.ilike.%$search%,description.ilike.%$search%');
       }
 
       if (userId != null) {
-        query = query.eq('contributor_id', userId);
+        queryBuilder = queryBuilder.eq('user_id', userId);
       }
 
-      final response = await query;
-      return response.map((json) => Item.fromJson(json)).toList();
+      // Apply ordering and pagination
+      final response = await queryBuilder
+          .order('created_at', ascending: false)
+          .range(offset, offset + limit - 1);
+
+      return response.map<Item>((json) => Item.fromJson(json)).toList();
     } catch (e, stackTrace) {
       _logger.e('Failed to get items', error: e, stackTrace: stackTrace);
       rethrow;
@@ -130,31 +131,13 @@ class SupabaseService {
   /// Get a single item by ID
   Future<Item?> getItem(String itemId, {String? userId}) async {
     try {
-      String selectQuery = '''
-        *,
-        contributor:profiles!contributor_id(id, username, display_name, avatar_url),
-        like_count:likes(count),
-        comment_count:comments(count)
-      ''';
-
-      // Add user-specific like status if user is provided
-      if (userId != null) {
-        selectQuery += ''',
-          user_liked:likes!inner(user_id)
-        ''';
-      }
-
-      var query = _supabase
+      final response = await _supabase
           .from('items')
-          .select(selectQuery)
+          .select('*')
           .eq('id', itemId)
-          .eq('status', 'approved');
-
-      if (userId != null) {
-        query = query.eq('likes.user_id', userId);
-      }
-
-      final response = await query.maybeSingle();
+          .eq('status', 'approved')
+          .maybeSingle();
+          
       if (response == null) return null;
 
       return Item.fromJson(response);
@@ -168,12 +151,13 @@ class SupabaseService {
   Future<Item> createItem(CreateItemRequest request, String userId) async {
     try {
       final itemData = request.toJson();
-      itemData['contributor_id'] = userId;
+      itemData['user_id'] = userId;
 
-      final response = await _supabase.from('items').insert(itemData).select('''
-            *,
-            contributor:profiles!contributor_id(id, username, display_name, avatar_url)
-          ''').single();
+      final response = await _supabase
+          .from('items')
+          .insert(itemData)
+          .select('*')
+          .single();
 
       return Item.fromJson(response);
     } catch (e, stackTrace) {
@@ -189,10 +173,8 @@ class SupabaseService {
           .from('items')
           .update(updates)
           .eq('id', itemId)
-          .select('''
-            *,
-            contributor:profiles!contributor_id(id, username, display_name, avatar_url)
-          ''').single();
+          .select('*')
+          .single();
 
       return Item.fromJson(response);
     } catch (e, stackTrace) {
@@ -216,12 +198,13 @@ class SupabaseService {
   /// Get comments for an item
   Future<List<Comment>> getComments(String itemId) async {
     try {
-      final response = await _supabase.from('comments').select('''
-            *,
-            author:profiles!author_id(id, username, display_name, avatar_url)
-          ''').eq('item_id', itemId).order('created_at', ascending: true);
+      final response = await _supabase
+          .from('comments')
+          .select('*')
+          .eq('item_id', itemId)
+          .order('created_at', ascending: true);
 
-      return response.map((json) => Comment.fromJson(json)).toList();
+      return response.map<Comment>((json) => Comment.fromJson(json)).toList();
     } catch (e, stackTrace) {
       _logger.e('Failed to get comments', error: e, stackTrace: stackTrace);
       rethrow;
@@ -233,13 +216,13 @@ class SupabaseService {
       CreateCommentRequest request, String userId) async {
     try {
       final commentData = request.toJson();
-      commentData['author_id'] = userId;
+      commentData['user_id'] = userId;
 
-      final response =
-          await _supabase.from('comments').insert(commentData).select('''
-            *,
-            author:profiles!author_id(id, username, display_name, avatar_url)
-          ''').single();
+      final response = await _supabase
+          .from('comments')
+          .insert(commentData)
+          .select('*')
+          .single();
 
       return Comment.fromJson(response);
     } catch (e, stackTrace) {
@@ -255,10 +238,7 @@ class SupabaseService {
           .from('comments')
           .update({'content': newContent})
           .eq('id', commentId)
-          .select('''
-            *,
-            author:profiles!author_id(id, username, display_name, avatar_url)
-          ''')
+          .select('*')
           .single();
 
       return Comment.fromJson(response);
@@ -318,7 +298,7 @@ class SupabaseService {
     try {
       final response = await _supabase
           .from('likes')
-          .select('id', const FetchOptions(count: CountOption.exact))
+          .select('id')
           .eq('item_id', itemId);
 
       return response.length;
@@ -356,29 +336,28 @@ class SupabaseService {
     String? geohash,
   }) async {
     try {
-      var searchQuery = _supabase
+      var searchQueryBuilder = _supabase
           .from('items')
-          .select('''
-            *,
-            contributor:profiles!contributor_id(id, username, display_name, avatar_url),
-            like_count:likes(count),
-            comment_count:comments(count)
-          ''')
-          .eq('status', 'approved')
-          .textSearch('search_vector', query)
-          .order('created_at', ascending: false)
-          .range(offset, offset + limit - 1);
+          .select('*')
+          .eq('status', 'approved');
+      
+      // Use basic text search with OR conditions
+      searchQueryBuilder = searchQueryBuilder
+          .or('title.ilike.%$query%,description.ilike.%$query%');
 
       if (category != null) {
-        searchQuery = searchQuery.eq('category', category.value);
+        searchQueryBuilder = searchQueryBuilder.eq('category', category.value);
       }
 
       if (geohash != null) {
-        searchQuery = searchQuery.like('geohash', '$geohash%');
+        searchQueryBuilder = searchQueryBuilder.ilike('geohash', '$geohash%');
       }
 
-      final response = await searchQuery;
-      return response.map((json) => Item.fromJson(json)).toList();
+      final response = await searchQueryBuilder
+          .order('created_at', ascending: false)
+          .range(offset, offset + limit - 1);
+      
+      return response.map<Item>((json) => Item.fromJson(json)).toList();
     } catch (e, stackTrace) {
       _logger.e('Failed to search items', error: e, stackTrace: stackTrace);
       rethrow;
@@ -397,18 +376,13 @@ class SupabaseService {
 
       final response = await _supabase
           .from('items')
-          .select('''
-            *,
-            contributor:profiles!contributor_id(id, username, display_name, avatar_url),
-            like_count:likes(count),
-            comment_count:comments(count)
-          ''')
+          .select('*')
           .eq('status', 'approved')
-          .like('geohash', '$geohashPrefix%')
+          .ilike('geohash', '$geohashPrefix%')
           .order('created_at', ascending: false)
           .range(offset, offset + limit - 1);
 
-      return response.map((json) => Item.fromJson(json)).toList();
+      return response.map<Item>((json) => Item.fromJson(json)).toList();
     } catch (e, stackTrace) {
       _logger.e('Failed to get items near location',
           error: e, stackTrace: stackTrace);
