@@ -38,12 +38,13 @@ void main() {
     });
 
     test('category colors are defined', () {
-      expect(AppTheme.categoryColors.length, equals(5));
+      expect(AppTheme.categoryColors.length, equals(6)); // Updated to 6 categories
       expect(AppTheme.categoryColors['lost'], isNotNull);
       expect(AppTheme.categoryColors['tossed'], isNotNull);
       expect(AppTheme.categoryColors['posted'], isNotNull);
       expect(AppTheme.categoryColors['marked'], isNotNull);
       expect(AppTheme.categoryColors['curious'], isNotNull);
+      expect(AppTheme.categoryColors['traces'], isNotNull);
     });
 
     test('getCategoryColor returns correct colors', () {

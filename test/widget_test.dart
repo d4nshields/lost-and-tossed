@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lost_and_tossed/core/theme/app_theme.dart';
 
 void main() {
   group('Lost & Tossed App', () {
@@ -25,9 +26,12 @@ void main() {
     testWidgets('App should have proper theme configuration',
         (WidgetTester tester) async {
       await tester.pumpWidget(
-        const ProviderScope(
+        ProviderScope(
           child: MaterialApp(
-            home: Scaffold(
+            title: 'Lost & Tossed',
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            home: const Scaffold(
               body: Center(
                 child: Text('Test'),
               ),
@@ -38,7 +42,8 @@ void main() {
 
       final materialApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
       expect(materialApp.theme, isNotNull);
-      expect(materialApp.darkTheme, isNull); // Will be null in this test setup
+      expect(materialApp.darkTheme, isNotNull);
+      expect(materialApp.title, equals('Lost & Tossed'));
     });
   });
 
@@ -52,11 +57,12 @@ void main() {
     });
 
     test('should have valid category list', () {
-      const categories = ['lost', 'tossed', 'posted', 'marked', 'curious'];
+      const categories = ['lost', 'tossed', 'posted', 'marked', 'curious', 'traces'];
 
-      expect(categories.length, 5);
+      expect(categories.length, 6);
       expect(categories.contains('lost'), true);
       expect(categories.contains('curious'), true);
+      expect(categories.contains('traces'), true);
     });
   });
 }

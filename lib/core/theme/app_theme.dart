@@ -26,11 +26,12 @@ class AppTheme {
     'posted': Color(0xFF10B981), // Green
     'marked': Color(0xFFEC4899), // Pink
     'curious': Color(0xFFF59E0B), // Amber
+    'traces': Color(0xFF3B82F6), // Blue
   };
 
   // Category-specific color getters
   static Color getCategoryColor(String category) {
-    return categoryColors[category.toLowerCase()] ?? primaryGreen;
+    return categoryColors[category.toLowerCase()] ?? warmGray;
   }
   
   // Individual color getters for backward compatibility
@@ -39,6 +40,7 @@ class AppTheme {
   static Color get postedColor => categoryColors['posted']!;
   static Color get markedColor => categoryColors['marked']!;
   static Color get curiousColor => categoryColors['curious']!;
+  static Color get tracesColor => categoryColors['traces']!;
 
   static ThemeData get light => lightTheme;
   static ThemeData get dark => darkTheme;

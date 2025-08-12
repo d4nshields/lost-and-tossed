@@ -7,6 +7,7 @@ enum LostItemCategory {
   posted,
   marked,
   curious,
+  traces,
 }
 
 enum LicenseType {
@@ -62,7 +63,7 @@ class LostItem {
       'id': id,
       'title': title,
       'description': description,
-      'category': category.name,
+      'category': category.name, // This returns lowercase name
       'imageUrl': imageUrl,
       'geohash': geohash,
       'createdAt': createdAt.toIso8601String(),
@@ -75,7 +76,7 @@ class LostItem {
 }
 
 extension LostItemCategoryExtension on LostItemCategory {
-  String get name {
+  String get displayName {
     switch (this) {
       case LostItemCategory.lost:
         return 'Lost';
@@ -87,6 +88,8 @@ extension LostItemCategoryExtension on LostItemCategory {
         return 'Marked';
       case LostItemCategory.curious:
         return 'Curious';
+      case LostItemCategory.traces:
+        return 'Traces';
     }
   }
 
@@ -102,6 +105,8 @@ extension LostItemCategoryExtension on LostItemCategory {
         return 'Non-removable markings';
       case LostItemCategory.curious:
         return 'Odd or unclassifiable';
+      case LostItemCategory.traces:
+        return 'Ephemeral marks of human presence';
     }
   }
 
@@ -117,6 +122,8 @@ extension LostItemCategoryExtension on LostItemCategory {
         return 'Someone\'s creative mark on the world.';
       case LostItemCategory.curious:
         return 'What story does this tell?';
+      case LostItemCategory.traces:
+        return 'Footprints tell tales of who passed by.';
     }
   }
 }

@@ -3,12 +3,13 @@ import 'package:lost_and_tossed/shared/models/lost_item.dart';
 
 void main() {
   group('LostItemCategory Tests', () {
-    test('should have correct names for all categories', () {
-      expect(LostItemCategory.lost.name, 'Lost');
-      expect(LostItemCategory.tossed.name, 'Tossed');
-      expect(LostItemCategory.posted.name, 'Posted');
-      expect(LostItemCategory.marked.name, 'Marked');
-      expect(LostItemCategory.curious.name, 'Curious');
+    test('should have correct display names for all categories', () {
+      expect(LostItemCategory.lost.displayName, 'Lost');
+      expect(LostItemCategory.tossed.displayName, 'Tossed');
+      expect(LostItemCategory.posted.displayName, 'Posted');
+      expect(LostItemCategory.marked.displayName, 'Marked');
+      expect(LostItemCategory.curious.displayName, 'Curious');
+      expect(LostItemCategory.traces.displayName, 'Traces');
     });
 
     test('should have correct descriptions for all categories', () {
@@ -31,6 +32,10 @@ void main() {
       expect(
         LostItemCategory.curious.description,
         'Odd or unclassifiable',
+      );
+      expect(
+        LostItemCategory.traces.description,
+        'Ephemeral marks of human presence',
       );
     });
 
@@ -55,14 +60,19 @@ void main() {
         LostItemCategory.curious.playfulDescription,
         'What story does this tell?',
       );
+      expect(
+        LostItemCategory.traces.playfulDescription,
+        'Footprints tell tales of who passed by.',
+      );
     });
 
     test('should work with all enum values', () {
       const categories = LostItemCategory.values;
-      expect(categories.length, 5);
+      expect(categories.length, 6);
 
       for (final category in categories) {
         expect(category.name, isA<String>());
+        expect(category.displayName, isA<String>());
         expect(category.description, isA<String>());
         expect(category.playfulDescription, isA<String>());
       }
@@ -129,7 +139,7 @@ void main() {
       );
 
       final json = item.toJson();
-      expect(json['category'], 'lost');
+      expect(json['category'], 'lost'); // Should be lowercase
       expect(json['license'], 'ccByNc');
 
       final recreated = LostItem.fromJson(json);
