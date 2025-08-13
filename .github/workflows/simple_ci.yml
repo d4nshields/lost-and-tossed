@@ -24,10 +24,6 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
     
-    # Removed formatting check - uncomment if you want strict formatting
-    # - name: Verify formatting
-    #   run: dart format --output=none --set-exit-if-changed .
-    
     - name: Analyze project source
       run: flutter analyze --no-fatal-infos
     
@@ -59,17 +55,16 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
     
-    # Explicitly clean and verify AndroidX settings before build
-    - name: Clean build artifacts
+    - name: Debug AndroidX configuration
       run: |
-        flutter clean
-        cd android && ./gradlew clean && cd ..
-    
-    - name: Verify AndroidX configuration
-      run: |
-        echo "Checking gradle.properties for AndroidX settings..."
-        grep -n "android.useAndroidX" android/gradle.properties || echo "AndroidX property not found!"
-        grep -n "android.enableJetifier" android/gradle.properties || echo "Jetifier property not found!"
+        echo "=== Checking gradle.properties content ==="
+        cat android/gradle.properties
+        echo ""
+        echo "=== Checking build.gradle content ==="
+        tail -10 android/app/build.gradle
+        echo ""
+        echo "=== Checking if gradle.properties exists in expected location ==="
+        ls -la android/gradle.properties
     
     - name: Build APK (Development version)
       run: flutter build apk --debug --target=lib/main_dev.dart
