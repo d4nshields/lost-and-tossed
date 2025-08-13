@@ -59,6 +59,18 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
     
+    # Explicitly clean and verify AndroidX settings before build
+    - name: Clean build artifacts
+      run: |
+        flutter clean
+        cd android && ./gradlew clean && cd ..
+    
+    - name: Verify AndroidX configuration
+      run: |
+        echo "Checking gradle.properties for AndroidX settings..."
+        grep -n "android.useAndroidX" android/gradle.properties || echo "AndroidX property not found!"
+        grep -n "android.enableJetifier" android/gradle.properties || echo "Jetifier property not found!"
+    
     - name: Build APK (Development version)
       run: flutter build apk --debug --target=lib/main_dev.dart
     
