@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/router/app_router.dart';
-import '../../core/theme/app_theme.dart';
+import '../../presentation/theme/cozy_theme.dart';
 
 /// Main scaffold with bottom navigation for the app
 ///
@@ -155,7 +155,7 @@ class _MoreOptionsSheet extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding: const EdgeInsets.all(AppTheme.spaceLg),
+      padding: const EdgeInsets.all(LostTossedCozyTheme.spaceLg),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -165,7 +165,7 @@ class _MoreOptionsSheet extends StatelessWidget {
             style: theme.textTheme.headlineSmall,
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: AppTheme.spaceLg),
+          const SizedBox(height: LostTossedCozyTheme.spaceLg),
           _MoreOption(
             icon: Icons.settings_outlined,
             title: 'Settings',
@@ -281,7 +281,7 @@ class _MoreOption extends StatelessWidget {
       ),
       onTap: onTap,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+      borderRadius: BorderRadius.circular(LostTossedCozyTheme.radiusMd),
       ),
     );
   }

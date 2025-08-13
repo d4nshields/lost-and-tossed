@@ -12,7 +12,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.lostandtossed.lost_and_tossed"
+    namespace = "com.tinkerplex.lost_and_tossed"
     compileSdk = 35
     ndkVersion = "26.3.11579264"
 
@@ -26,11 +26,13 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.lostandtossed.lost_and_tossed"
+        applicationId = "com.tinkerplex.lost_and_tossed"
         minSdk = 21
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        
+        // Version will be overridden by build scripts for releases
+        versionCode = flutter.versionCode ?: 1
+        versionName = flutter.versionName ?: "0.1.0"
     }
 
     // Configure signing for release builds

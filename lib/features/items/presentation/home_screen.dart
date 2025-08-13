@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/theme/app_theme.dart';
+import '../../../presentation/theme/cozy_theme.dart';
 import '../../../core/constants/app_strings.dart';
 
 /// Home screen showing discovered items
@@ -23,35 +23,49 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.explore,
               size: 64,
-              color: AppTheme.primaryGreen,
+              color: LostTossedCozyTheme.goldenAmber,
             ),
-            SizedBox(height: AppTheme.spaceLg),
-            Text(
+            const SizedBox(height: LostTossedCozyTheme.spaceLg),
+            const Text(
               'Welcome to Lost & Tossed!',
-              style: AppTheme.headingMedium,
+              style: LostTossedCozyTheme.headingMedium,
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: AppTheme.spaceMd),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppTheme.spaceLg),
+            const SizedBox(height: LostTossedCozyTheme.spaceMd),
+            const Padding(
+              padding: const EdgeInsets.symmetric(horizontal: LostTossedCozyTheme.spaceLg),
               child: Text(
                 AppStrings.welcomeSubtitle,
-                style: AppTheme.bodyLarge,
+                style: LostTossedCozyTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(height: AppTheme.spaceXl),
-            Text(
-              'Start by capturing your first discovery!',
-              style: AppTheme.bodyMedium,
-              textAlign: TextAlign.center,
+            const SizedBox(height: LostTossedCozyTheme.spaceXl),
+            LostTossedCozyTheme.createMicroCopy(
+              "Every object has a story waiting to be told.",
+            ),
+            const SizedBox(height: LostTossedCozyTheme.spaceLg),
+            
+            // Category preview chips
+            Wrap(
+              spacing: LostTossedCozyTheme.spaceSm,
+              runSpacing: LostTossedCozyTheme.spaceSm,
+              alignment: WrapAlignment.center,
+              children: [
+                LostTossedCozyTheme.createCategoryChip(category: 'lost'),
+                LostTossedCozyTheme.createCategoryChip(category: 'tossed'),
+                LostTossedCozyTheme.createCategoryChip(category: 'posted'),
+                LostTossedCozyTheme.createCategoryChip(category: 'marked'),
+                LostTossedCozyTheme.createCategoryChip(category: 'curious'),
+                LostTossedCozyTheme.createCategoryChip(category: 'traces'),
+              ],
             ),
           ],
         ),

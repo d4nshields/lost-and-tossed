@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_theme.dart';
+import '../../presentation/theme/cozy_theme.dart';
 import '../../core/constants/app_strings.dart';
 
 /// Loading screen shown during app initialization
@@ -23,7 +23,7 @@ class LoadingScreen extends StatelessWidget {
               height: 120,
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(AppTheme.radius2xl),
+                borderRadius: BorderRadius.circular(LostTossedCozyTheme.radius2xl),
               ),
               child: Icon(
                 Icons.explore,
@@ -32,7 +32,7 @@ class LoadingScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: AppTheme.spaceXl),
+            const SizedBox(height: LostTossedCozyTheme.spaceXl),
 
             // App name
             Text(
@@ -43,7 +43,7 @@ class LoadingScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: AppTheme.spaceSm),
+            const SizedBox(height: LostTossedCozyTheme.spaceSm),
 
             // Tagline
             Text(
@@ -54,7 +54,7 @@ class LoadingScreen extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
 
-            const SizedBox(height: AppTheme.spaceXl),
+            const SizedBox(height: LostTossedCozyTheme.spaceXl),
 
             // Loading indicator
             CircularProgressIndicator(
@@ -63,14 +63,11 @@ class LoadingScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: AppTheme.spaceLg),
+            const SizedBox(height: LostTossedCozyTheme.spaceLg),
 
-            // Loading text
-            Text(
-              'Preparing your adventure...',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
-              ),
+            // Loading text with cozy micro-copy
+            LostTossedCozyTheme.createMicroCopy(
+              'Gathering stories from the streets...',
             ),
           ],
         ),

@@ -5,7 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/di/providers.dart';
 import 'core/router/app_router.dart';
-import 'core/theme/app_theme.dart';
+import 'presentation/theme/cozy_theme.dart';
 import 'core/constants/app_constants.dart';
 import 'shared/widgets/loading_screen.dart';
 
@@ -29,15 +29,15 @@ class LostAndTossedApp extends ConsumerWidget {
     return appInitAsyncValue.when(
       loading: () => MaterialApp(
         title: AppConstants.appName,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
+        theme: LostTossedCozyTheme.lightTheme,
+        darkTheme: LostTossedCozyTheme.lightTheme, // Using light theme for both modes initially
         home: const LoadingScreen(),
         debugShowCheckedModeBanner: false,
       ),
       error: (error, stackTrace) => MaterialApp(
         title: AppConstants.appName,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
+        theme: LostTossedCozyTheme.lightTheme,
+        darkTheme: LostTossedCozyTheme.lightTheme, // Using light theme for both modes initially
         home: _ErrorScreen(
           error: error,
           onRetry: () => ref.invalidate(appInitProvider),
@@ -54,8 +54,8 @@ class LostAndTossedApp extends ConsumerWidget {
           routerConfig: router,
 
           // Theming
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
+          theme: LostTossedCozyTheme.lightTheme,
+          darkTheme: LostTossedCozyTheme.lightTheme, // Using light theme for both modes initially
           themeMode: ThemeMode.system,
 
           // Localization
@@ -103,7 +103,7 @@ class _ErrorScreen extends StatelessWidget {
     return Scaffold(
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(AppTheme.spaceLg),
+          padding: const EdgeInsets.all(LostTossedCozyTheme.spaceLg),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -114,7 +114,7 @@ class _ErrorScreen extends StatelessWidget {
                 color: Theme.of(context).colorScheme.error,
               ),
 
-              const SizedBox(height: AppTheme.spaceLg),
+              const SizedBox(height: LostTossedCozyTheme.spaceLg),
 
               // Error title
               Text(
@@ -123,7 +123,7 @@ class _ErrorScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
 
-              const SizedBox(height: AppTheme.spaceMd),
+              const SizedBox(height: LostTossedCozyTheme.spaceMd),
 
               // Error message
               Text(
@@ -132,16 +132,16 @@ class _ErrorScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
 
-              const SizedBox(height: AppTheme.spaceSm),
+              const SizedBox(height: LostTossedCozyTheme.spaceSm),
 
               // Technical details (in debug mode)
               if (kDebugMode) ...[
-                const SizedBox(height: AppTheme.spaceMd),
+                const SizedBox(height: LostTossedCozyTheme.spaceMd),
                 Container(
-                  padding: const EdgeInsets.all(AppTheme.spaceMd),
+                  padding: const EdgeInsets.all(LostTossedCozyTheme.spaceMd),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                    borderRadius: BorderRadius.circular(LostTossedCozyTheme.radiusMd),
                     border: Border.all(
                       color: Theme.of(context)
                           .colorScheme
@@ -159,7 +159,7 @@ class _ErrorScreen extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                       ),
-                      const SizedBox(height: AppTheme.spaceSm),
+                      const SizedBox(height: LostTossedCozyTheme.spaceSm),
                       Text(
                         error.toString(),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -171,7 +171,7 @@ class _ErrorScreen extends StatelessWidget {
                 ),
               ],
 
-              const SizedBox(height: AppTheme.spaceXl),
+              const SizedBox(height: LostTossedCozyTheme.spaceXl),
 
               // Retry button
               ElevatedButton.icon(
