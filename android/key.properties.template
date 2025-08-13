@@ -1,0 +1,8 @@
+# Key properties file for Android app signing (P12 format)
+# Replace the values below with your actual signing information
+# NEVER commit this file to git!
+
+storePassword=your-keystore-password-here
+keyPassword=your-key-password-here
+keyAlias=upload
+storeFile=lost-and-tossed-upload-key.p12

@@ -4,6 +4,13 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+// Load signing configuration
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.lostandtossed.lost_and_tossed"
     compileSdk = 35
@@ -26,16 +33,31 @@ android {
         versionName = "1.0.0"
     }
 
+    // Configure signing for release builds
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile rootProject.file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // Keep minification disabled since it was causing issues
+            // DISABLE minification to avoid R8 issues with Google Play Core / ML Kit
             minifyEnabled false
             shrinkResources false
-            signingConfig = signingConfigs.debug
+            
+            // Use release signing if available, otherwise debug signing
+            signingConfig = keystorePropertiesFile.exists() ? signingConfigs.release : signingConfigs.debug
         }
         debug {
             minifyEnabled false
             shrinkResources false
+            signingConfig = signingConfigs.debug
         }
     }
     
@@ -53,4 +75,3 @@ dependencies {
     // Essential AndroidX to ensure compatibility
     implementation 'androidx.core:core:1.13.1'
 }
-
