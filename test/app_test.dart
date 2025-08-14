@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:lost_and_tossed/main.dart';
 import 'package:lost_and_tossed/core/theme/app_theme.dart';
+import 'package:lost_and_tossed/presentation/theme/cozy_theme.dart';
 import 'package:lost_and_tossed/core/constants/app_constants.dart';
 
 void main() {
@@ -14,7 +15,7 @@ void main() {
 
       // Should show loading screen initially
       expect(find.text('Lost & Tossed'), findsOneWidget);
-      expect(find.text('Preparing your adventure...'), findsOneWidget);
+      expect(find.text('Gathering stories from the streets...'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
@@ -24,8 +25,8 @@ void main() {
       final MaterialApp materialApp = tester.widget(find.byType(MaterialApp));
 
       expect(materialApp.title, equals(AppConstants.appName));
-      expect(materialApp.theme, equals(AppTheme.lightTheme));
-      expect(materialApp.darkTheme, equals(AppTheme.darkTheme));
+      expect(materialApp.theme, equals(LostTossedCozyTheme.lightTheme));
+      expect(materialApp.darkTheme, equals(LostTossedCozyTheme.lightTheme)); // Currently using light theme for both
       expect(materialApp.debugShowCheckedModeBanner, isFalse);
     });
   });

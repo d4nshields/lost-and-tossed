@@ -19,14 +19,14 @@ class LostTossedCozyTheme {
   
   // Interactive Elements - Nature-inspired, community-focused
   static const Color goldenAmber = Color(0xFFC9A961);      // Primary buttons - like autumn leaves
-  static const Color forestMist = Color(0xFF7BA88A);       // Secondary buttons - like park benches
+  static const Color forestMist = Color(0xFF447253);       // Secondary buttons - like park benches (WCAG AA compliant)
   static const Color terracotta = Color(0xFFCC7A5C);       // Alerts - like brick walkways
   
   // Category Colors - Cozy adaptations of Lost & Tossed categories
   static const Map<String, Color> categoryColors = {
     'lost': Color(0xFF9B7EBF),      // Soft purple - "A glove begins its solo adventure"
     'tossed': Color(0xFF8B8B8B),    // Warm gray - "The snack that left only a clue"
-    'posted': Color(0xFF7BA88A),    // Forest mist - "Poster's still here, but the event is long gone"
+    'posted': Color(0xFF447253),    // Forest mist - "Poster's still here, but the event is long gone"
     'marked': Color(0xFFD08B94),    // Rose dust - Like chalk on sidewalks
     'curious': Color(0xFFD4A574),   // Warm amber - For the unexplainable
     'traces': Color(0xFF8FABC7),    // Sky blue - Ephemeral like morning mist
