@@ -85,7 +85,7 @@ jobs:
         echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
         echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
         echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-        echo "storeFile=lost-and-tossed-upload-key.p12" >> android/key.properties
+        echo "storeFile=app/lost-and-tossed-upload-key.p12" >> android/key.properties
         
     - name: Determine deployment track
       id: track

@@ -82,7 +82,7 @@ jobs:
         storePassword=${{ secrets.KEYSTORE_PASSWORD }}
         keyPassword=${{ secrets.KEY_PASSWORD }}
         keyAlias=${{ secrets.KEY_ALIAS }}
-        storeFile=lost-and-tossed-upload-key.p12
+        storeFile=app/lost-and-tossed-upload-key.p12
         EOF
     
     - name: Build App Bundle
