@@ -78,7 +78,7 @@ jobs:
         
     - name: Decode keystore
       run: |
-        echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/lost-and-tossed-upload-key.p12
+        echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 --decode > android/app/lost-and-tossed-upload-key.p12
         
     - name: Create key.properties
       run: |
