@@ -48,9 +48,6 @@ jobs:
     - name: Run unit tests
       run: flutter test
       
-    - name: Run widget tests
-      run: flutter test test/widget/
-      
   build-and-deploy:
     name: Build and Deploy to Play Store
     needs: test
