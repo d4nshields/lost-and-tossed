@@ -31,8 +31,8 @@ android {
         targetSdk = 35
         
         // Version will be overridden by build scripts for releases
-        versionCode = flutter.versionCode ?: 1
-        versionName = flutter.versionName ?: "0.1.0"
+        versionCode = 8142022
+        versionName = "0.2.4"
     }
 
     // Configure signing for release builds

@@ -1,6 +1,6 @@
 name: lost_and_tossed
 description: A playful community field guide for documenting found, discarded, or posted public objects.
-version: 0.1.1+8131917
+version: 0.2.4+8142022
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
