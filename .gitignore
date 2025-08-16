@@ -47,3 +47,5 @@ fastlane/test_output
 
 # Firebase
 firebase_options.dart
+/android/.gradle/
+/android/local.properties
