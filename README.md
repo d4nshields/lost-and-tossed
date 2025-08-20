@@ -38,6 +38,36 @@ Lost & Tossed is a mobile application that helps users document and share intere
 - ✅ **Screen Placeholders**: All main screens stubbed out
 - ✅ **Loading States**: Professional loading and error screens
 
+## Deployment
+
+### GitHub Actions CI/CD
+
+The project includes automated deployment to Google Play Store via GitHub Actions.
+
+#### Prerequisites
+1. Google Play Console account with app created
+2. Service account with deployment permissions
+3. Release keystore for app signing
+4. Firebase project with `google-services.json`
+
+#### Setup Instructions
+1. Run the helper script to encode your files:
+   ```bash
+   bash scripts/prepare_github_secrets.sh
+   ```
+
+2. Add the following secrets to your GitHub repository:
+   - `GOOGLE_SERVICES_JSON_BASE64` - Base64 encoded google-services.json
+   - `RELEASE_KEYSTORE_BASE64` - Base64 encoded keystore file
+   - `KEYSTORE_PASSWORD` - Keystore password
+   - `KEY_PASSWORD` - Key password
+   - `KEY_ALIAS` - Key alias (e.g., "upload")
+   - `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` - Service account JSON from Play Console
+
+3. Create a release on GitHub or manually trigger the workflow
+
+For detailed instructions, see [docs/DEPLOYMENT_SETUP.md](docs/DEPLOYMENT_SETUP.md)
+
 ## Features
 
 ### Categories
