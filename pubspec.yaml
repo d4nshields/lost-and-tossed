@@ -28,6 +28,9 @@ dependencies:
   # Supabase
   supabase_flutter: ^2.3.4
   
+  # Authentication
+  google_sign_in: ^6.2.1
+  
   # Location & Maps
   geolocator: ^10.1.0
   latlong2: ^0.8.1
@@ -75,6 +78,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  
+  assets:
+    - assets/images/
     
   fonts:
     - family: Inter

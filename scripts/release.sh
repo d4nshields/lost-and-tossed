@@ -66,7 +66,7 @@ flutter build apk --release
 echo ""
 echo -e "${GREEN}✅ Build Complete!${NC}"
 echo "=================================="
-echo "App ID: com.tinkerplex.lost_and_tossed"
+echo "App ID: com.tinkerplexlabs.lost_and_tossed"
 echo "Version: $VERSION_NAME ($VERSION_CODE)"
 echo ""
 echo "Files generated:"

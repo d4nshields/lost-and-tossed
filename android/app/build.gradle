@@ -2,6 +2,7 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services'  // Google Services plugin
 }
 
 // Load signing configuration
@@ -12,7 +13,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.tinkerplex.lost_and_tossed"
+    namespace = "com.tinkerplexlabs.lost_and_tossed"
     compileSdk = 35
     ndkVersion = "26.3.11579264"
 
@@ -26,7 +27,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.tinkerplex.lost_and_tossed"
+        applicationId = "com.tinkerplexlabs.lost_and_tossed"
         minSdk = 21
         targetSdk = 35
         
