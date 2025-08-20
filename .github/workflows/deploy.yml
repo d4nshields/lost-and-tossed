@@ -86,7 +86,27 @@ jobs:
         echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
         echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
         echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+        # Use relative path from android folder (where build.gradle looks)
         echo "storeFile=app/lost-and-tossed-upload-key.p12" >> android/key.properties
+        
+        # Debug: Verify files exist
+        echo "🔍 Checking signing configuration:"
+        echo "key.properties exists: $([ -f android/key.properties ] && echo 'YES' || echo 'NO')"
+        echo "keystore exists: $([ -f android/app/lost-and-tossed-upload-key.p12 ] && echo 'YES' || echo 'NO')"
+        echo "key.properties content (without passwords):"
+        grep -E "keyAlias|storeFile" android/key.properties || true
+        
+    - name: Verify signing setup
+      run: |
+        echo "🔐 Extracting SHA-1 from upload keystore:"
+        keytool -list -v \
+          -keystore android/app/lost-and-tossed-upload-key.p12 \
+          -storetype PKCS12 \
+          -storepass "${{ secrets.KEYSTORE_PASSWORD }}" 2>/dev/null | grep SHA1 || echo "Failed to extract SHA-1"
+        
+        echo ""
+        echo "📋 Build.gradle signing config check:"
+        grep -A 10 "signingConfigs" android/app/build.gradle || true
         
     - name: Determine deployment track
       id: track
@@ -191,7 +211,27 @@ jobs:
         grep -E "versionCode|versionName" android/app/build.gradle
         
     - name: Build App Bundle
-      run: flutter build appbundle --release
+      run: |
+        echo "🏭 Starting build process..."
+        
+        # Build with verbose output to see signing details
+        flutter build appbundle --release --verbose 2>&1 | tee build.log
+        
+        # Extract signing info from build log
+        echo ""
+        echo "🔍 Checking build signing configuration:"
+        grep -i "signingConfig\|keystore\|SHA" build.log | tail -20 || true
+        
+        # Verify the built AAB
+        echo ""
+        echo "📦 Verifying built AAB:"
+        if [ -f build/app/outputs/bundle/release/app-release.aab ]; then
+          echo "AAB file created successfully"
+          ls -lh build/app/outputs/bundle/release/app-release.aab
+        else
+          echo "ERROR: AAB file not found!"
+          exit 1
+        fi
       
     - name: Upload to Play Store
       uses: r0adkll/upload-google-play@v1
