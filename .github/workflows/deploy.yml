@@ -150,23 +150,39 @@ jobs:
         
     - name: Update version in files
       run: |
-        # Generate timestamp-based version code (YYMMDDHHMM format)
-        # YY = years since 2025 (2025=00, 2026=01, etc.)
-        # This ensures version codes are always increasing across years and deployment methods
-        CURRENT_YEAR=$(date -u +"%Y")
-        YEAR_OFFSET=$((CURRENT_YEAR - 2025))
-        TIMESTAMP_VERSION_CODE=$(printf "%02d%s" $YEAR_OFFSET $(date -u +"%m%d%H%M"))
-        # Remove leading zeros to ensure it's treated as a number
-        VERSION_CODE=$((10#$TIMESTAMP_VERSION_CODE))
+        # Generate timestamp-based version code
+        # Format: YMMDDHHMMSS where Y = years since 2025
+        # This ensures unique version codes for each build
         
-        echo "🔢 Using timestamp-based version code: $VERSION_CODE (Year offset: $YEAR_OFFSET, UTC: $(date -u +'%Y-%m-%d %H:%M'))"
+        CURRENT_YEAR=$(date -u +"%Y")
+        BASE_YEAR=2025
+        YEAR_OFFSET=$((CURRENT_YEAR - BASE_YEAR))
+        
+        # Format: YMMDDHHMMSS (11 digits max, well under Android's 2100000000 limit)
+        # Using seconds for granularity to ensure uniqueness
+        TIMESTAMP_PART=$(date -u +"%m%d%H%M%S")
+        VERSION_CODE=$(printf "%d%s" $YEAR_OFFSET $TIMESTAMP_PART)
+        
+        # Ensure it's a valid integer (remove any leading zeros)
+        VERSION_CODE=$((10#$VERSION_CODE))
+        
+        echo "🔢 Using timestamp-based version code: $VERSION_CODE"
+        echo "   Year: $(date -u +"%Y"), Base Year: $BASE_YEAR, Year Offset: $YEAR_OFFSET"
+        echo "   UTC Time: $(date -u +'%Y-%m-%d %H:%M:%S')"
+        echo "   Format: ${YEAR_OFFSET}${TIMESTAMP_PART}"
         
         # Update pubspec.yaml
         sed -i "s/^version:.*/version: ${{ steps.version.outputs.VERSION_NAME }}+${VERSION_CODE}/" pubspec.yaml
         
-        # Update build.gradle
+        # Update build.gradle - handle both Flutter-style and hardcoded version codes
+        # First try to update Flutter-style version code
         sed -i "s/versionCode = flutter.versionCode ?: [0-9]\+/versionCode = ${VERSION_CODE}/" android/app/build.gradle
+        # Also update hardcoded version code format
+        sed -i "s/versionCode = [0-9]\+/versionCode = ${VERSION_CODE}/" android/app/build.gradle
+        
+        # Update version name - handle both Flutter-style and hardcoded
         sed -i "s/versionName = flutter.versionName ?: \"[^\"]*\"/versionName = \"${{ steps.version.outputs.VERSION_NAME }}\"/" android/app/build.gradle
+        sed -i "s/versionName = \"[^\"]*\"/versionName = \"${{ steps.version.outputs.VERSION_NAME }}\"/" android/app/build.gradle
         
         # Verify the changes
         echo "📋 Updated pubspec.yaml:"

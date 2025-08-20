@@ -105,11 +105,19 @@ If you encounter signing errors:
 3. Check that the base64 encoding was done correctly
 
 ### Version Code Conflicts
-The workflow uses timestamp-based version codes to avoid conflicts. Format: `YYMMDDHHMM`
-- YY: Years since 2025 (00 for 2025, 01 for 2026, etc.)
-- MMDDHHMM: Month, day, hour, minute in UTC
+The workflow uses timestamp-based version codes to avoid conflicts. Format: `YMMDDHHMMSS`
+- Y: Years since 2025 (0 for 2025, 1 for 2026, etc.)
+- MMDDHHMMSS: Month, day, hour, minute, second in UTC
 
-This ensures version codes always increase chronologically.
+This ensures version codes always increase chronologically and are unique for each build.
+
+**Important:** The version code in `android/app/build.gradle` should use Flutter's dynamic version:
+```gradle
+versionCode = flutter.versionCode ?: 1
+versionName = flutter.versionName ?: "1.0.0"
+```
+
+Do NOT hardcode version numbers in build.gradle as this will cause the CI/CD to fail with duplicate version code errors.
 
 ## Local Testing
 
