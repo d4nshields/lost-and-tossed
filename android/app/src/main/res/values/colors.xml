@@ -2,4 +2,5 @@
 <resources>
     <!-- Launch screen background color (Lost & Tossed primary color) -->
     <color name="launch_background_color">#FF6B73FF</color>
+	<color name="ic_launcher_background">#2D6B3E</color>
 </resources>
