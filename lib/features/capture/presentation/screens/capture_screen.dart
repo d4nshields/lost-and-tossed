@@ -7,8 +7,10 @@ import '../../../auth/providers/auth_providers.dart';
 import '../../domain/models/submission_models.dart';
 import '../../providers/capture_providers.dart';
 import '../widgets/trace_details_form.dart';
+import '../widgets/ocr_text_editor.dart';
+import '../../../../services/enhanced_privacy_ml_service.dart';
 
-/// Enhanced capture screen with all required features
+/// Enhanced capture screen with ML privacy processing and OCR
 class CaptureScreen extends ConsumerStatefulWidget {
   const CaptureScreen({super.key});
 
@@ -64,7 +66,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> with WidgetsBindi
       );
 
       if (pickedFile != null) {
-        ref.read(captureNotifierProvider.notifier).setImage(File(pickedFile.path));
+        await ref.read(captureNotifierProvider.notifier).setImage(File(pickedFile.path));
       }
     } catch (e) {
       if (mounted) {
@@ -137,13 +139,55 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> with WidgetsBindi
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Image section
+              // Image section with processing status
               _buildImageSection(theme, captureState),
+
+              // Privacy processing status
+              if (captureState.isProcessingImage) ...[
+                const SizedBox(height: LostTossedCozyTheme.spaceMd),
+                ProcessingStatusIndicator(
+                  status: captureState.processingStatus ?? 'Processing image...',
+                ),
+              ],
+
+              // Privacy blur preview
+              if (captureState.privacyAreas != null && captureState.privacyAreas!.isNotEmpty) ...[
+                const SizedBox(height: LostTossedCozyTheme.spaceMd),
+                PrivacyBlurPreview(
+                  imagePath: captureState.processedImagePath ?? captureState.imagePath!,
+                  blurAreas: captureState.privacyAreas!,
+                  onReprocess: () {
+                    ref.read(captureNotifierProvider.notifier).reprocessImage();
+                  },
+                ),
+              ],
 
               const SizedBox(height: LostTossedCozyTheme.spaceLg),
 
               // Category selection
               _buildCategorySection(theme, captureState),
+
+              // Lost subtype selection (if Lost category selected)
+              if (captureState.category == SubmissionCategory.lost) ...[
+                const SizedBox(height: LostTossedCozyTheme.spaceMd),
+                _buildLostSubtypeSection(theme, captureState),
+              ],
+
+              // OCR text editor for lost lists
+              if (captureState.category == SubmissionCategory.lost && 
+                  captureState.subtype == 'list' &&
+                  captureState.imagePath != null) ...[
+                const SizedBox(height: LostTossedCozyTheme.spaceLg),
+                OCRTextEditor(
+                  extractedText: captureState.extractedListText,
+                  onTextChanged: (text) {
+                    ref.read(captureNotifierProvider.notifier).updateExtractedListText(text);
+                  },
+                  onRetryOCR: captureState.isProcessingImage ? null : () {
+                    ref.read(captureNotifierProvider.notifier).reprocessImage();
+                  },
+                ),
+              ],
 
               // Show trace details form if traces category is selected
               if (captureState.category == SubmissionCategory.traces) ...[
@@ -176,6 +220,12 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> with WidgetsBindi
               // Disposal status
               _buildDisposalSection(theme, captureState),
 
+              // Processing mode indicator
+              if (captureState.processingMode != null) ...[
+                const SizedBox(height: LostTossedCozyTheme.spaceMd),
+                _buildProcessingModeIndicator(theme, captureState),
+              ],
+
               const SizedBox(height: LostTossedCozyTheme.spaceXl),
 
               // Submit button
@@ -190,7 +240,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> with WidgetsBindi
   }
 
   Widget _buildImageSection(ThemeData theme, CaptureState state) {
-    if (state.imagePath == null) {
+    // Use processed image if available, otherwise original
+    final displayImagePath = state.processedImagePath ?? state.imagePath;
+    
+    if (displayImagePath == null) {
       return InkWell(
         onTap: () => _showImageSourceDialog(context),
         borderRadius: BorderRadius.circular(LostTossedCozyTheme.radiusMd),
@@ -239,12 +292,46 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> with WidgetsBindi
         ClipRRect(
           borderRadius: BorderRadius.circular(LostTossedCozyTheme.radiusMd),
           child: Image.file(
-            File(state.imagePath!),
+            File(displayImagePath),
             width: double.infinity,
             height: 300,
             fit: BoxFit.cover,
           ),
         ),
+        // Privacy indicator badge
+        if (state.processedImagePath != null)
+          Positioned(
+            top: 8,
+            left: 8,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: LostTossedCozyTheme.spaceSm,
+                vertical: LostTossedCozyTheme.spaceXs,
+              ),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(LostTossedCozyTheme.radiusSm),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.privacy_tip,
+                    size: 16,
+                    color: theme.colorScheme.onPrimaryContainer,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Privacy Protected',
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: theme.colorScheme.onPrimaryContainer,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         Positioned(
           top: 8,
           right: 8,
@@ -299,6 +386,47 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> with WidgetsBindi
             state.category!.description,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildLostSubtypeSection(ThemeData theme, CaptureState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Type of lost item',
+          style: theme.textTheme.titleSmall,
+        ),
+        const SizedBox(height: LostTossedCozyTheme.spaceSm),
+        SegmentedButton<String?>(
+          segments: const [
+            ButtonSegment(
+              value: null,
+              label: Text('General'),
+              icon: Icon(Icons.help_outline),
+            ),
+            ButtonSegment(
+              value: 'list',
+              label: Text('List/Note'),
+              icon: Icon(Icons.list_alt),
+            ),
+          ],
+          selected: {state.subtype},
+          onSelectionChanged: (Set<String?> selection) {
+            ref.read(captureNotifierProvider.notifier).setSubtype(selection.first);
+          },
+        ),
+        if (state.subtype == 'list') ...[
+          const SizedBox(height: LostTossedCozyTheme.spaceXs),
+          Text(
+            'OCR will extract text from the list for easier reading',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.primary,
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -481,10 +609,42 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> with WidgetsBindi
     );
   }
 
+  Widget _buildProcessingModeIndicator(ThemeData theme, CaptureState state) {
+    final modeText = state.processingMode == ProcessingMode.gpu 
+        ? 'GPU Accelerated' 
+        : 'CPU Mode';
+    final modeIcon = state.processingMode == ProcessingMode.gpu 
+        ? Icons.speed 
+        : Icons.memory;
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: LostTossedCozyTheme.spaceSm,
+        vertical: LostTossedCozyTheme.spaceXs,
+      ),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceVariant,
+        borderRadius: BorderRadius.circular(LostTossedCozyTheme.radiusSm),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(modeIcon, size: 16),
+          const SizedBox(width: 4),
+          Text(
+            'Processing: $modeText',
+            style: theme.textTheme.labelSmall,
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildSubmitButton(ThemeData theme, CaptureState state) {
     final canSubmit = state.imagePath != null && 
                       state.category != null && 
-                      !state.isSubmitting;
+                      !state.isSubmitting &&
+                      !state.isProcessingImage;
 
     return SizedBox(
       width: double.infinity,

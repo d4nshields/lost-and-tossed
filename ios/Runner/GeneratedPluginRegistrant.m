@@ -30,6 +30,12 @@
 @import google_mlkit_face_detection;
 #endif
 
+#if __has_include(<google_mlkit_object_detection/GoogleMlKitObjectDetectionPlugin.h>)
+#import <google_mlkit_object_detection/GoogleMlKitObjectDetectionPlugin.h>
+#else
+@import google_mlkit_object_detection;
+#endif
+
 #if __has_include(<google_mlkit_text_recognition/GoogleMlKitTextRecognitionPlugin.h>)
 #import <google_mlkit_text_recognition/GoogleMlKitTextRecognitionPlugin.h>
 #else
@@ -97,6 +103,7 @@
   [GeolocatorPlugin registerWithRegistrar:[registry registrarForPlugin:@"GeolocatorPlugin"]];
   [GoogleMlKitCommonsPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleMlKitCommonsPlugin"]];
   [GoogleMlKitFaceDetectionPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleMlKitFaceDetectionPlugin"]];
+  [GoogleMlKitObjectDetectionPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleMlKitObjectDetectionPlugin"]];
   [GoogleMlKitTextRecognitionPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleMlKitTextRecognitionPlugin"]];
   [FLTGoogleSignInPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleSignInPlugin"]];
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
