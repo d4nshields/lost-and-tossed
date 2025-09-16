@@ -551,7 +551,10 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> with WidgetsBindi
             behavior: SnackBarBehavior.floating,
           ),
         );
-        Navigator.pop(context);
+        // Clear the form for next capture instead of navigating away
+        ref.read(captureNotifierProvider.notifier).clear();
+        _captionController.clear();
+        _tagController.clear();
       }
     } catch (e) {
       if (mounted) {
