@@ -2,6 +2,13 @@
     
     <!-- Basic permissions only for initial test -->
     <uses-permission android:name="android.permission.INTERNET" />
+    
+    <!-- Location permissions for geotagging captures -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    
+    <!-- Camera permission for taking photos -->
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:label="Lost &amp; Tossed"

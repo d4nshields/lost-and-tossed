@@ -52,6 +52,7 @@ dependencies:
   permission_handler: ^11.0.1
   share_plus: ^7.2.1
   uuid: ^4.1.0
+  shared_preferences: ^2.2.2
   
   # Logging & Analytics
   logger: ^2.0.2+1

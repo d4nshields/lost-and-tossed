@@ -2,17 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/di/providers.dart';
 import 'core/router/app_router.dart';
 import 'presentation/theme/cozy_theme.dart';
 import 'core/constants/app_constants.dart';
 import 'shared/widgets/loading_screen.dart';
+import 'features/capture/providers/capture_providers.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize SharedPreferences before app starts
+  final sharedPreferences = await SharedPreferences.getInstance();
+  
   runApp(
-    const ProviderScope(
-      child: LostAndTossedApp(),
+    ProviderScope(
+      overrides: [
+        // Override the SharedPreferences provider with the actual instance
+        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+      ],
+      child: const LostAndTossedApp(),
     ),
   );
 }
@@ -49,16 +60,11 @@ class LostAndTossedApp extends ConsumerWidget {
 
         return MaterialApp.router(
           title: AppConstants.appName,
-
-          // Routing
-          routerConfig: router,
-
-          // Theming
           theme: LostTossedCozyTheme.lightTheme,
           darkTheme: LostTossedCozyTheme.lightTheme, // Using light theme for both modes initially
-          themeMode: ThemeMode.system,
-
-          // Localization
+          routerConfig: router,
+          debugShowCheckedModeBanner: false,
+          
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
@@ -66,20 +72,20 @@ class LostAndTossedApp extends ConsumerWidget {
           ],
           supportedLocales: const [
             Locale('en', 'US'),
+            Locale('es', 'ES'),
+            Locale('fr', 'FR'),
           ],
-
-          // Debug
-          debugShowCheckedModeBanner: false,
-
-          // App metadata
+          
           builder: (context, child) {
+            // Limit text scale factor for consistent UI
+            final mediaQueryData = MediaQuery.of(context);
+            final constrainedTextScaleFactor = mediaQueryData.textScaleFactor.clamp(0.8, 1.3);
+            
             return MediaQuery(
-              // Ensure text scaling doesn't break layouts
-              data: MediaQuery.of(context).copyWith(
-                textScaleFactor:
-                    MediaQuery.of(context).textScaleFactor.clamp(0.8, 1.2),
+              data: mediaQueryData.copyWith(
+                textScaler: TextScaler.linear(constrainedTextScaleFactor),
               ),
-              child: child ?? const SizedBox.shrink(),
+              child: child!,
             );
           },
         );
@@ -88,7 +94,7 @@ class LostAndTossedApp extends ConsumerWidget {
   }
 }
 
-/// Error screen shown when app initialization fails
+/// Error screen widget
 class _ErrorScreen extends StatelessWidget {
   final Object error;
   final VoidCallback onRetry;
@@ -100,84 +106,37 @@ class _ErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      body: Center(
+      body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(LostTossedCozyTheme.spaceLg),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Error icon
               Icon(
                 Icons.error_outline,
                 size: 64,
-                color: Theme.of(context).colorScheme.error,
+                color: theme.colorScheme.error,
               ),
-
-              const SizedBox(height: LostTossedCozyTheme.spaceLg),
-
-              // Error title
+              const SizedBox(height: 24),
               Text(
                 'Oops! Something went wrong',
-                style: Theme.of(context).textTheme.headlineSmall,
+                style: theme.textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               ),
-
-              const SizedBox(height: LostTossedCozyTheme.spaceMd),
-
-              // Error message
+              const SizedBox(height: 16),
               Text(
-                'We had trouble starting the app. Please check your internet connection and try again.',
-                style: Theme.of(context).textTheme.bodyMedium,
+                kDebugMode ? error.toString() : 'Failed to initialize the app. Please try again.',
+                style: theme.textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
-
-              const SizedBox(height: LostTossedCozyTheme.spaceSm),
-
-              // Technical details (in debug mode)
-              if (kDebugMode) ...[
-                const SizedBox(height: LostTossedCozyTheme.spaceMd),
-                Container(
-                  padding: const EdgeInsets.all(LostTossedCozyTheme.spaceMd),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(LostTossedCozyTheme.radiusMd),
-                    border: Border.all(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .outline
-                          .withOpacity(0.3),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Debug Info:',
-                        style:
-                            Theme.of(context).textTheme.labelMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                      ),
-                      const SizedBox(height: LostTossedCozyTheme.spaceSm),
-                      Text(
-                        error.toString(),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              fontFamily: 'monospace',
-                            ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-
-              const SizedBox(height: LostTossedCozyTheme.spaceXl),
-
-              // Retry button
-              ElevatedButton.icon(
+              const SizedBox(height: 32),
+              FilledButton.icon(
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Try Again'),
+                label: const Text('Retry'),
               ),
             ],
           ),
