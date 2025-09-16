@@ -66,9 +66,7 @@ void main() {
     // Skip the flaky test in CI environment
     testGoldens(
       'Trace form with selections',
-      skip: const bool.fromEnvironment('CI', defaultValue: false) 
-          ? 'Skipping in CI due to minor rendering differences' 
-          : false,
+      skip: const bool.fromEnvironment('CI', defaultValue: false),
       (tester) async {
         await tester.pumpWidgetBuilder(
           TraceDetailsForm(
