@@ -108,6 +108,9 @@ final appInitProvider = FutureProvider<void>((ref) async {
     );
     logger.i('Supabase initialized');
 
+    // SharedPreferences is already initialized in main.dart via provider override
+    logger.i('SharedPreferences available via provider override');
+
     // Initialize location service
     final locationService = ref.read(locationServiceProvider);
     await locationService.initialize();

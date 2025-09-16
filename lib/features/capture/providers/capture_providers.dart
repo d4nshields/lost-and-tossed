@@ -14,8 +14,9 @@ final loggerProvider = Provider<Logger>((ref) {
 });
 
 /// Provider for SharedPreferences
+/// This will be overridden during app initialization
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError('SharedPreferences must be overridden');
+  throw UnimplementedError('SharedPreferences must be overridden during app initialization');
 });
 
 /// Provider for location service

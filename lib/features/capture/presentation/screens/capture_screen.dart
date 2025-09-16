@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import '../../../../presentation/theme/cozy_theme.dart';
 import '../../../auth/providers/auth_providers.dart';
@@ -21,28 +20,16 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> with WidgetsBindi
   final _captionController = TextEditingController();
   final _imagePicker = ImagePicker();
   final _tagController = TextEditingController();
-  bool _isInitialized = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _initializeScreen();
-  }
-
-  Future<void> _initializeScreen() async {
-    // Initialize SharedPreferences - will be used later when needed
-    await SharedPreferences.getInstance();
-    
     // Load existing draft if any
     final captureState = ref.read(captureNotifierProvider);
     if (captureState.caption != null) {
       _captionController.text = captureState.caption!;
     }
-    
-    setState(() {
-      _isInitialized = true;
-    });
   }
 
   @override
@@ -94,12 +81,6 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> with WidgetsBindi
     final isAuthenticated = ref.watch(authUserProvider).value != null;
     final captureState = ref.watch(captureNotifierProvider);
     final tagsAsync = ref.watch(tagsProvider);
-
-    if (!_isInitialized) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
 
     if (!isAuthenticated) {
       return Scaffold(
