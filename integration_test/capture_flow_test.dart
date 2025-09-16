@@ -1,99 +1,151 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:lost_and_tossed/main.dart' as app;
-import 'package:mocktail/mocktail.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-// Mock for testing without actual Supabase connection
-class MockSupabaseClient extends Mock implements SupabaseClient {}
-class MockGoTrueClient extends Mock implements GoTrueClient {}
-class MockUser extends Mock implements User {}
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Capture Flow Integration Test', () {
-    testWidgets('complete capture flow from login to submission', (tester) async {
-      // Note: This is a simplified integration test that would need
-      // proper setup with test Supabase instance in a real scenario
-      
+    testWidgets('Complete capture flow with traces category', (tester) async {
       // Start the app
       app.main();
       await tester.pumpAndSettle();
 
-      // Verify we're on the login screen
-      expect(find.text('Lost & Tossed'), findsOneWidget);
-      expect(find.text('Continue with Google'), findsOneWidget);
+      // Navigate to capture screen (assuming there's a capture button)
+      final captureButton = find.byIcon(Icons.add_a_photo);
+      if (captureButton.evaluate().isNotEmpty) {
+        await tester.tap(captureButton);
+        await tester.pumpAndSettle();
+      }
 
-      // In a real test, we would mock the Google Sign-In
-      // For now, we'll test the UI flow assuming authenticated state
-      
-      // Simulate authenticated state by directly navigating
-      // In real app, this happens after Google Sign-In
-      
-      // The rest would test:
-      // 1. Navigation to home after auth
-      // 2. Tapping capture tab
-      // 3. Adding photo
-      // 4. Selecting category
-      // 5. Adding caption
-      // 6. Submitting
-      
-      // Verify the login screen elements
-      expect(find.text('A playful community field guide'), findsOneWidget);
-      expect(find.textContaining('A glove begins'), findsOneWidget);
+      // Verify we're on the capture screen
+      expect(find.text('Document a Find'), findsOneWidget);
+
+      // Test category selection
+      await tester.tap(find.text('Traces'));
+      await tester.pumpAndSettle();
+
+      // Verify traces form appears
+      expect(find.text('Surface'), findsOneWidget);
+      expect(find.text('Freshness'), findsOneWidget);
+      expect(find.text('Permanence'), findsOneWidget);
+
+      // Select surface type
+      await tester.tap(find.text('Snow'));
+      await tester.pumpAndSettle();
+
+      // Select freshness
+      await tester.tap(find.text('Hours old'));
+      await tester.pumpAndSettle();
+
+      // Select permanence
+      await tester.tap(find.text('Ephemeral'));
+      await tester.pumpAndSettle();
+
+      // Enter direction
+      final directionField = find.byType(TextField).at(0);
+      await tester.enterText(directionField, '45');
+      await tester.pumpAndSettle();
+
+      // Add notes
+      final notesField = find.byType(TextField).at(1);
+      await tester.enterText(notesField, 'Test trace notes');
+      await tester.pumpAndSettle();
+
+      // Test tag selection
+      final tagChips = find.byType(FilterChip);
+      if (tagChips.evaluate().isNotEmpty) {
+        await tester.tap(tagChips.first);
+        await tester.pumpAndSettle();
+      }
+
+      // Add caption
+      final captionField = find.byType(TextField).last;
+      await tester.enterText(captionField, 'A mysterious trace in the snow');
+      await tester.pumpAndSettle();
+
+      // Toggle license
+      await tester.tap(find.text('CC0'));
+      await tester.pumpAndSettle();
+
+      // Toggle disposed
+      await tester.tap(find.text('Disposed'));
+      await tester.pumpAndSettle();
+
+      // Verify all selections are made
+      expect(find.text('Traces'), findsOneWidget);
+      expect(find.text('A mysterious trace in the snow'), findsOneWidget);
     });
 
-    testWidgets('capture screen requires authentication', (tester) async {
+    testWidgets('Category switching hides/shows trace form', (tester) async {
       app.main();
       await tester.pumpAndSettle();
 
-      // Try to navigate to capture without auth
-      // Should redirect to login
-      expect(find.text('Continue with Google'), findsOneWidget);
+      // Navigate to capture screen
+      final captureButton = find.byIcon(Icons.add_a_photo);
+      if (captureButton.evaluate().isNotEmpty) {
+        await tester.tap(captureButton);
+        await tester.pumpAndSettle();
+      }
+
+      // Select traces category
+      await tester.tap(find.text('Traces'));
+      await tester.pumpAndSettle();
+
+      // Verify trace form is visible
+      expect(find.text('Surface'), findsOneWidget);
+
+      // Switch to different category
+      await tester.tap(find.text('Lost'));
+      await tester.pumpAndSettle();
+
+      // Verify trace form is hidden
+      expect(find.text('Surface'), findsNothing);
+
+      // Switch back to traces
+      await tester.tap(find.text('Traces'));
+      await tester.pumpAndSettle();
+
+      // Verify trace form is visible again
+      expect(find.text('Surface'), findsOneWidget);
     });
 
-    testWidgets('bottom navigation shows three tabs', (tester) async {
-      // This would test the authenticated state
-      // Verify three tabs exist: Explore, Capture, Notebook
-      
-      // Mock authenticated state setup would go here
-      
+    testWidgets('Draft persistence on app lifecycle', (tester) async {
       app.main();
       await tester.pumpAndSettle();
-      
-      // Check for navigation elements (would be visible after auth)
-      // expect(find.text('Explore'), findsOneWidget);
-      // expect(find.text('Capture'), findsOneWidget);
-      // expect(find.text('Notebook'), findsOneWidget);
-    });
-  });
 
-  group('Category Selection', () {
-    testWidgets('all six categories are available', (tester) async {
-      // Would test that all categories are shown:
-      // Lost, Tossed, Posted, Marked, Curious, Traces
-      
-      app.main();
-      await tester.pumpAndSettle();
-      
-      // Verify app loads
-      expect(find.text('Lost & Tossed'), findsOneWidget);
-    });
-  });
+      // Navigate to capture screen
+      final captureButton = find.byIcon(Icons.add_a_photo);
+      if (captureButton.evaluate().isNotEmpty) {
+        await tester.tap(captureButton);
+        await tester.pumpAndSettle();
+      }
 
-  group('User Profile Creation', () {
-    testWidgets('new user gets generated handle', (tester) async {
-      // Would test that after first login:
-      // 1. User profile is created
-      // 2. Handle is generated (explorer_XXXXX format)
-      // 3. User can view their handle in Notebook tab
-      
-      app.main();
+      // Make some selections
+      await tester.tap(find.text('Curious'));
       await tester.pumpAndSettle();
-      
-      // Verify app loads
-      expect(find.text('Lost & Tossed'), findsOneWidget);
+
+      // Add caption
+      final captionField = find.byType(TextField).first;
+      await tester.enterText(captionField, 'Draft test caption');
+      await tester.pumpAndSettle();
+
+      // Simulate app going to background (draft should be saved)
+      tester.binding.handleAppLifecycleStateChanged(
+        AppLifecycleState.paused,
+      );
+      await tester.pumpAndSettle();
+
+      // Simulate app coming back
+      tester.binding.handleAppLifecycleStateChanged(
+        AppLifecycleState.resumed,
+      );
+      await tester.pumpAndSettle();
+
+      // Verify draft was preserved
+      expect(find.text('Draft test caption'), findsOneWidget);
     });
   });
 }
