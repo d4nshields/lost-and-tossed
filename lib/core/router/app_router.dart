@@ -2,16 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../di/providers.dart';
+import '../../features/auth/providers/auth_providers.dart';
 import '../../features/auth/presentation/login_screen.dart';
-import '../../features/auth/presentation/signup_screen.dart';
-import '../../features/auth/presentation/profile_setup_screen.dart';
-import '../../features/items/presentation/home_screen.dart';
-import '../../features/items/presentation/item_detail_screen.dart';
-import '../../features/items/presentation/search_screen.dart';
-import '../../features/capture/presentation/capture_screen.dart';
-import '../../features/profile/presentation/profile_screen.dart';
-import '../../features/profile/presentation/edit_profile_screen.dart';
+import '../../features/explore/presentation/screens/explore_screen.dart';
+import '../../features/capture/presentation/screens/capture_screen.dart';
+import '../../features/notebook/presentation/screens/notebook_screen.dart';
 import '../../shared/widgets/main_scaffold.dart';
 import '../../shared/widgets/loading_screen.dart';
 
@@ -25,11 +20,11 @@ final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 /// Router provider that handles authentication state
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(currentUserProvider);
+  final authState = ref.watch(authUserProvider);
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: false,  // Turn off verbose logging
     initialLocation: '/',
 
     // Redirect logic based on authentication state
@@ -38,20 +33,20 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLoading = authState.isLoading;
 
       // Show loading screen while checking auth state
-      if (isLoading) {
+      if (isLoading && state.matchedLocation != '/loading') {
         return '/loading';
       }
 
       final isOnAuthPage = state.matchedLocation.startsWith('/auth');
-      final isOnProfileSetup = state.matchedLocation == '/profile-setup';
+      final isOnLoadingPage = state.matchedLocation == '/loading';
 
-      // If not authenticated and not on auth page, redirect to login
-      if (!isAuthenticated && !isOnAuthPage) {
+      // If not authenticated and not on auth/loading page, redirect to login
+      if (!isAuthenticated && !isOnAuthPage && !isOnLoadingPage) {
         return '/auth/login';
       }
 
       // If authenticated but on auth page, redirect to home
-      if (isAuthenticated && isOnAuthPage && !isOnProfileSetup) {
+      if (isAuthenticated && isOnAuthPage) {
         return '/';
       }
 
@@ -70,14 +65,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/auth/login',
         builder: (context, state) => const LoginScreen(),
       ),
-      GoRoute(
-        path: '/auth/signup',
-        builder: (context, state) => const SignupScreen(),
-      ),
-      GoRoute(
-        path: '/profile-setup',
-        builder: (context, state) => const ProfileSetupScreen(),
-      ),
 
       // Main app shell with bottom navigation
       ShellRoute(
@@ -86,43 +73,28 @@ final routerProvider = Provider<GoRouter>((ref) {
           return MainScaffold(child: child);
         },
         routes: [
-          // Home/Discovery tab
+          // Explore tab (map + feed)
           GoRoute(
             path: '/',
-            builder: (context, state) => const HomeScreen(),
-            routes: [
-              GoRoute(
-                path: 'item/:id',
-                builder: (context, state) {
-                  final itemId = state.pathParameters['id']!;
-                  return ItemDetailScreen(itemId: itemId);
-                },
-              ),
-            ],
-          ),
-
-          // Search tab
-          GoRoute(
-            path: '/search',
-            builder: (context, state) => const SearchScreen(),
+            pageBuilder: (context, state) => const MaterialPage(
+              child: ExploreScreen(),
+            ),
           ),
 
           // Capture tab
           GoRoute(
             path: '/capture',
-            builder: (context, state) => const CaptureScreen(),
+            pageBuilder: (context, state) => const MaterialPage(
+              child: CaptureScreen(),
+            ),
           ),
 
-          // Profile tab
+          // Notebook tab (user's finds)
           GoRoute(
-            path: '/profile',
-            builder: (context, state) => const ProfileScreen(),
-            routes: [
-              GoRoute(
-                path: 'edit',
-                builder: (context, state) => const EditProfileScreen(),
-              ),
-            ],
+            path: '/notebook',
+            pageBuilder: (context, state) => const MaterialPage(
+              child: NotebookScreen(),
+            ),
           ),
         ],
       ),
@@ -168,42 +140,62 @@ final routerProvider = Provider<GoRouter>((ref) {
 class AppRoutes {
   static const String loading = '/loading';
   static const String login = '/auth/login';
-  static const String signup = '/auth/signup';
-  static const String profileSetup = '/profile-setup';
   static const String home = '/';
-  static const String search = '/search';
   static const String capture = '/capture';
-  static const String profile = '/profile';
-  static const String editProfile = '/profile/edit';
+  static const String notebook = '/notebook';
+}
 
-  static String itemDetail(String itemId) => '/item/$itemId';
+/// Session guard widget for protecting routes
+class SessionGuard extends ConsumerWidget {
+  final Widget child;
+
+  const SessionGuard({
+    super.key,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authUserProvider);
+
+    return authState.when(
+      data: (user) {
+        if (user == null) {
+          // Not authenticated, redirect to login
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.go(AppRoutes.login);
+          });
+          return const LoadingScreen();
+        }
+        return child;
+      },
+      loading: () => const LoadingScreen(),
+      error: (error, stack) {
+        // Auth error, redirect to login
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          context.go(AppRoutes.login);
+        });
+        return const LoadingScreen();
+      },
+    );
+  }
 }
 
 /// Extensions for easier navigation
 extension GoRouterExtensions on GoRouter {
-  /// Navigate to item detail screen
-  void goToItemDetail(String itemId) {
-    go(AppRoutes.itemDetail(itemId));
+  /// Navigate to capture screen
+  void goToCapture() {
+    go(AppRoutes.capture);
   }
 
-  /// Navigate to capture screen with result callback
-  Future<T?> pushCapture<T extends Object?>() {
-    return push<T>(AppRoutes.capture);
-  }
-
-  /// Navigate to profile edit screen
-  Future<T?> pushEditProfile<T extends Object?>() {
-    return push<T>(AppRoutes.editProfile);
+  /// Navigate to notebook screen
+  void goToNotebook() {
+    go(AppRoutes.notebook);
   }
 
   /// Navigate to login screen
   void goToLogin() {
     go(AppRoutes.login);
-  }
-
-  /// Navigate to signup screen
-  void goToSignup() {
-    go(AppRoutes.signup);
   }
 
   /// Navigate to home screen
@@ -215,12 +207,10 @@ extension GoRouterExtensions on GoRouter {
 /// Route-aware mixin for widgets that need to know current route
 mixin RouteAwareMixin<T extends StatefulWidget> on State<T> {
   String get currentRoute => GoRouterState.of(context).matchedLocation;
-  String? get currentItemId => GoRouterState.of(context).pathParameters['id'];
 
-  bool get isOnHomeTab => currentRoute == AppRoutes.home;
-  bool get isOnSearchTab => currentRoute == AppRoutes.search;
+  bool get isOnExploreTab => currentRoute == AppRoutes.home;
   bool get isOnCaptureTab => currentRoute == AppRoutes.capture;
-  bool get isOnProfileTab => currentRoute == AppRoutes.profile;
+  bool get isOnNotebookTab => currentRoute == AppRoutes.notebook;
 }
 
 /// Helper for getting current route information

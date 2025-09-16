@@ -1,5 +1,7 @@
 # Local environment file
 .env
+.env.*
+.env.oauth
 
 # Build artifacts
 build/

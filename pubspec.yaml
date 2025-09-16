@@ -28,6 +28,9 @@ dependencies:
   # Supabase
   supabase_flutter: ^2.3.4
   
+  # Authentication
+  google_sign_in: ^6.2.1
+  
   # Location & Maps
   geolocator: ^10.1.0
   latlong2: ^0.8.1
@@ -71,10 +74,16 @@ dev_dependencies:
   golden_toolkit: ^0.15.0
   integration_test:
     sdk: flutter
+  
+  # App Icon Generation
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
   generate: true
+  
+  assets:
+    - assets/images/
     
   fonts:
     - family: Inter
@@ -82,3 +91,12 @@ flutter:
         - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
         - asset: assets/fonts/Inter-Italic-VariableFont_opsz,wght.ttf
           style: italic
+
+# App Icon Configuration
+flutter_launcher_icons:
+  android: true
+  ios: false  # Not building for iOS yet
+  image_path: "assets/images/icon.png"
+  adaptive_icon_background: "#2D6B3E"  # Your app's primary green
+  adaptive_icon_foreground: "assets/images/icon.png"
+  min_sdk_android: 21

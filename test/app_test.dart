@@ -1,26 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:lost_and_tossed/main.dart';
 import 'package:lost_and_tossed/core/theme/app_theme.dart';
 import 'package:lost_and_tossed/presentation/theme/cozy_theme.dart';
 import 'package:lost_and_tossed/core/constants/app_constants.dart';
+import 'package:lost_and_tossed/core/di/providers.dart';
+
+// Mock classes
+class MockSupabaseClient extends Mock implements SupabaseClient {}
 
 void main() {
+  // Initialize test environment
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    
+    // Mock SharedPreferences
+    SharedPreferences.setMockInitialValues({});
+    
+    // Check if Supabase is already initialized
+    try {
+      // Try to access Supabase.instance
+      Supabase.instance.client;
+    } catch (e) {
+      // If not initialized, initialize it for tests with mock storage
+      await Supabase.initialize(
+        url: AppConstants.supabaseUrl,
+        anonKey: AppConstants.supabaseAnonKey,
+      );
+    }
+  });
+
   group('LostAndTossedApp', () {
     testWidgets('shows loading screen during initialization',
         (WidgetTester tester) async {
-      await tester.pumpWidget(const ProviderScope(child: LostAndTossedApp()));
+      // Override the appInitProvider to avoid actual initialization
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            appInitProvider.overrideWith((ref) async {
+              // Mock initialization - just wait a bit
+              await Future.delayed(const Duration(milliseconds: 100));
+            }),
+          ],
+          child: const LostAndTossedApp(),
+        ),
+      );
 
       // Should show loading screen initially
       expect(find.text('Lost & Tossed'), findsOneWidget);
       expect(find.text('Gathering stories from the streets...'), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      
+      // Pump to complete the timer and avoid pending timer error
+      await tester.pump(const Duration(milliseconds: 100));
     });
 
     testWidgets('applies correct theme', (WidgetTester tester) async {
-      await tester.pumpWidget(const ProviderScope(child: LostAndTossedApp()));
+      // Override the appInitProvider to complete immediately
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            appInitProvider.overrideWith((ref) async {
+              // Mock initialization - complete immediately
+            }),
+          ],
+          child: const LostAndTossedApp(),
+        ),
+      );
 
       final MaterialApp materialApp = tester.widget(find.byType(MaterialApp));
 

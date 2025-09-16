@@ -7,6 +7,7 @@ import '../../shared/services/location_service.dart';
 import '../../shared/services/image_service.dart';
 import '../../shared/services/storage_service.dart';
 import '../../shared/services/simple_supabase_service.dart';
+import '../../features/auth/providers/auth_providers.dart';
 
 /// Core dependency injection providers
 ///
@@ -16,10 +17,8 @@ import '../../shared/services/simple_supabase_service.dart';
 
 /// Supabase client provider
 final supabaseProvider = Provider<SupabaseClient>((ref) {
-  return SupabaseClient(
-    AppConstants.supabaseUrl,
-    AppConstants.supabaseAnonKey,
-  );
+  // Use the Supabase instance that was initialized in main
+  return Supabase.instance.client;
 });
 
 /// Logger provider for structured logging
@@ -68,14 +67,13 @@ final supabaseServiceProvider = Provider<SupabaseService>((ref) {
   );
 });
 
-/// Current user session provider (simplified for now)
+/// Current user session provider
 final currentUserProvider = StreamProvider<User?>((ref) {
-  // For now, return null - we'll implement auth later
-  return Stream.value(null);
+  return ref.watch(authUserProvider.stream);
 });
 
-/// Current user profile provider (simplified)
-final currentUserProfileProvider =
+/// Current user profile provider
+final currentUserProfileStreamProvider =
     StreamProvider<Map<String, dynamic>?>((ref) async* {
   final user = await ref.watch(currentUserProvider.future);
   if (user == null) {
@@ -102,6 +100,13 @@ final appInitProvider = FutureProvider<void>((ref) async {
 
   try {
     logger.i('App initialization started');
+
+    // Initialize Supabase
+    await Supabase.initialize(
+      url: AppConstants.supabaseUrl,
+      anonKey: AppConstants.supabaseAnonKey,
+    );
+    logger.i('Supabase initialized');
 
     // Initialize location service
     final locationService = ref.read(locationServiceProvider);
