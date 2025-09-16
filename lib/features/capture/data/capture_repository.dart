@@ -136,11 +136,11 @@ class CaptureRepository {
       final bytes = await imageFile.readAsBytes();
       
       await _supabase.storage
-          .from('submissions')
+          .from('item-images')
           .uploadBinary(fileName, bytes);
       
       final url = _supabase.storage
-          .from('submissions')
+          .from('item-images')
           .getPublicUrl(fileName);
       
       return url;
