@@ -57,6 +57,14 @@ dependencies:
   
   # Logging & Analytics
   logger: ^2.0.2+1
+  
+  # Background Tasks
+  # Using android_alarm_manager_plus instead of workmanager due to compatibility
+  android_alarm_manager_plus: ^4.0.1
+  flutter_local_notifications: ^17.0.0
+  
+  # Connectivity
+  connectivity_plus: ^5.0.2
 
 dev_dependencies:
   flutter_test:

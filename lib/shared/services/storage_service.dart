@@ -4,12 +4,13 @@ import 'package:logger/logger.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../models/submission_models.dart';
 import 'image_service.dart';
 
-/// Service for Supabase Storage operations
+/// Service for Supabase Storage operations with support for multiple image versions
 ///
 /// This service handles file uploads to Supabase Storage buckets,
-/// including image optimization, thumbnail generation, and URL management.
+/// including original, blurred, and thumbnail versions of images.
 class StorageService {
   final SupabaseClient _supabase;
   final Logger _logger;
@@ -22,7 +23,98 @@ class StorageService {
         _logger = logger,
         _uuid = const Uuid();
 
-  /// Upload processed image and thumbnail for an item
+  /// Upload all versions of a submission image
+  Future<SubmissionUrls?> uploadSubmissionImages({
+    required ProcessedImage processedImage,
+    required String userId,
+    required String submissionId,
+  }) async {
+    try {
+      _logger.i('Uploading submission images for: $submissionId');
+
+      // Generate unique file names with submission ID for organization
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final basePath = 'submissions/$userId/$submissionId';
+      
+      final originalPath = '$basePath/$timestamp-original.jpg';
+      final blurredPath = '$basePath/$timestamp-blurred.jpg';
+      final thumbnailPath = '$basePath/$timestamp-thumb.jpg';
+
+      // Upload original image (stored but not publicly linked if has privacy concerns)
+      String? originalUrl;
+      if (!processedImage.hasBlurredContent) {
+        // If no privacy concerns, we can use the original
+        originalUrl = await _uploadFile(
+          bucketName: AppConstants.itemImagesBucket,
+          filePath: originalPath,
+          fileBytes: processedImage.originalBytes,
+          contentType: 'image/jpeg',
+        );
+
+        if (originalUrl == null) {
+          _logger.e('Failed to upload original image');
+          return null;
+        }
+      } else {
+        // Store original privately for potential future review
+        originalUrl = await _uploadFile(
+          bucketName: 'private-originals', // Separate private bucket
+          filePath: originalPath,
+          fileBytes: processedImage.originalBytes,
+          contentType: 'image/jpeg',
+        );
+      }
+
+      // Upload blurred/processed image (this is the main display image)
+      final blurredUrl = await _uploadFile(
+        bucketName: AppConstants.itemImagesBucket,
+        filePath: blurredPath,
+        fileBytes: processedImage.processedBytes,
+        contentType: 'image/jpeg',
+      );
+
+      if (blurredUrl == null) {
+        _logger.e('Failed to upload blurred image');
+        // Clean up original if it was uploaded
+        if (originalUrl != null && !processedImage.hasBlurredContent) {
+          await _deleteFile(AppConstants.itemImagesBucket, originalPath);
+        }
+        return null;
+      }
+
+      // Upload thumbnail
+      final thumbnailUrl = await _uploadFile(
+        bucketName: AppConstants.itemImagesBucket,
+        filePath: thumbnailPath,
+        fileBytes: processedImage.thumbnailBytes,
+        contentType: 'image/jpeg',
+      );
+
+      if (thumbnailUrl == null) {
+        _logger.e('Failed to upload thumbnail');
+        // Clean up previously uploaded files
+        await _deleteFile(AppConstants.itemImagesBucket, blurredPath);
+        if (originalUrl != null && !processedImage.hasBlurredContent) {
+          await _deleteFile(AppConstants.itemImagesBucket, originalPath);
+        }
+        return null;
+      }
+
+      _logger.i('Successfully uploaded all submission images');
+
+      return SubmissionUrls(
+        original: processedImage.hasBlurredContent ? null : originalUrl,
+        blurred: blurredUrl,
+        thumbnail: thumbnailUrl,
+      );
+    } catch (e, stackTrace) {
+      _logger.e('Failed to upload submission images',
+          error: e, stackTrace: stackTrace);
+      return null;
+    }
+  }
+
+  /// Upload processed image and thumbnail for an item (legacy support)
   Future<ItemImageUrls?> uploadItemImage(
     ProcessedImage processedImage,
     String userId,
@@ -157,7 +249,39 @@ class StorageService {
     }
   }
 
-  /// Delete item images
+  /// Delete submission images
+  Future<bool> deleteSubmissionImages({
+    required String submissionId,
+    required String userId,
+  }) async {
+    try {
+      // List all files for this submission
+      final basePath = 'submissions/$userId/$submissionId';
+      final files = await _supabase.storage
+          .from(AppConstants.itemImagesBucket)
+          .list(path: basePath);
+
+      if (files.isEmpty) {
+        _logger.w('No files found for submission: $submissionId');
+        return true;
+      }
+
+      // Delete all files
+      final filePaths = files.map((f) => '$basePath/${f.name}').toList();
+      await _supabase.storage
+          .from(AppConstants.itemImagesBucket)
+          .remove(filePaths);
+
+      _logger.i('Successfully deleted ${files.length} submission images');
+      return true;
+    } catch (e, stackTrace) {
+      _logger.e('Failed to delete submission images',
+          error: e, stackTrace: stackTrace);
+      return false;
+    }
+  }
+
+  /// Delete item images (legacy)
   Future<bool> deleteItemImages(ItemImageUrls imageUrls) async {
     try {
       final results = await Future.wait([
@@ -215,11 +339,14 @@ class StorageService {
       if (!bucketExists) {
         _logger.i('Creating storage bucket: $bucketName');
 
-        // Create bucket with public access
+        // Determine if bucket should be public based on name
+        final isPublic = bucketName != 'private-originals';
+
+        // Create bucket with appropriate access
         await _supabase.storage.createBucket(
           bucketName,
-          const BucketOptions(
-            public: true,
+          BucketOptions(
+            public: isPublic,
             allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
             fileSizeLimit: '5MB',
           ),
@@ -256,7 +383,12 @@ class StorageService {
   /// Get storage usage statistics
   Future<StorageStats?> getStorageStats(String userId) async {
     try {
-      // List all files for the user
+      // List all files for the user in submissions
+      final submissionFiles = await _supabase.storage
+          .from(AppConstants.itemImagesBucket)
+          .list(path: 'submissions/$userId');
+
+      // List all files for the user in items (legacy)
       final itemFiles = await _supabase.storage
           .from(AppConstants.itemImagesBucket)
           .list(path: 'items/$userId');
@@ -273,7 +405,7 @@ class StorageService {
       int totalSize = 0;
       int totalFiles = 0;
 
-      for (final file in itemFiles) {
+      for (final file in [...submissionFiles, ...itemFiles]) {
         if (file.metadata?['size'] != null) {
           totalSize += file.metadata!['size'] as int;
         }
@@ -290,7 +422,7 @@ class StorageService {
       return StorageStats(
         totalFiles: totalFiles,
         totalSizeBytes: totalSize,
-        itemImageCount: itemFiles.length,
+        itemImageCount: itemFiles.length + submissionFiles.length,
         avatarCount: userAvatars.length,
       );
     } catch (e, stackTrace) {
@@ -346,7 +478,7 @@ class StorageService {
   }
 }
 
-/// Data class for item image URLs
+/// Data class for item image URLs (legacy support)
 class ItemImageUrls {
   final String imageUrl;
   final String thumbnailUrl;
