@@ -90,6 +90,7 @@ For detailed instructions, see [docs/DEPLOYMENT_SETUP.md](docs/DEPLOYMENT_SETUP.
 - **Image Processing**: Google ML Kit for privacy protection
 - **Location**: Geolocator with geohash encoding
 - **Testing**: Unit tests, widget tests, integration tests
+- **Platform Support**: Android 11+ (API 30+) for modern photo picker and privacy features
 
 ## Next Steps
 

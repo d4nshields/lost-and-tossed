@@ -1,0 +1,46 @@
+# .logcatscope - Define what is "in scope" for lost_and_tossed
+#
+# Tags listed here will ALWAYS be shown, even if they match
+# LEVEL/TAG/TAGLEVEL ignore rules (only PATTERN rules can hide them).
+
+[app]
+package = "com.tinkerplexlabs.lost_and_tossed"
+processes = [
+    "com.tinkerplexlabs.lost_and_tossed",
+]
+
+[expected_tags]
+# Your app's tags - these are protected from LEVEL/TAG/TAGLEVEL filters
+tags = [
+    # Flutter framework (your app's output goes through this)
+    "flutter",
+
+    # Your app's process name (truncated by logcat)
+    "labs.lost_and_tossed",
+
+    # Supabase client tags (for auth/network error visibility)
+    "supabase",
+    "gotrue",
+    "postgrest",
+    "realtime",
+
+    # Useful Android lifecycle tags for debugging app behavior
+    "ActivityTaskManager",
+    "ActivityManager",
+]
+
+[expected_libs]
+libs = [
+    "flutter",
+    "androidx.",
+    "kotlin.",
+]
+
+[stacktrace_roots]
+roots = [
+    "com.tinkerplexlabs.lost_and_tossed.",
+    "io.flutter.",
+    "androidx.",
+    "java.",
+    "kotlin.",
+]

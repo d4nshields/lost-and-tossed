@@ -109,4 +109,4 @@ flutter_launcher_icons:
   image_path: "assets/images/icon.png"
   adaptive_icon_background: "#2D6B3E"  # Your app's primary green
   adaptive_icon_foreground: "assets/images/icon.png"
-  min_sdk_android: 21
+  min_sdk_android: 30
