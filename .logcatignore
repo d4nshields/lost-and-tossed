@@ -1,0 +1,248 @@
+# .logcatignore - Define patterns to hide from logcat output
+#
+# Supported rule types:
+#   TAG:TagName           - Ignore all lines with this tag
+#   LEVEL:V               - Ignore all lines with this level (V/D/I/W/E)
+#   TAGLEVEL:TagName:V    - Ignore lines with this tag AND level
+#   PATTERN:regex         - Ignore lines where message matches regex
+#   LINEPATTERN:regex     - Ignore lines where full line matches regex
+
+# ============================
+# Global log level filtering
+# ============================
+
+# Ignore verbose and debug logs by default
+LEVEL:V
+# LEVEL:D
+
+
+# ============================
+# Input Method / Keyboard spam
+# (This is the BIGGEST source of noise)
+# ============================
+
+# Google Keyboard (Gboard) internal tags
+TAG:VoiceSearchConfigUtils
+TAG:ZipLPPopulator
+TAG:goz
+TAG:TooltipLifecycleManager
+TAG:NgaStateManager
+TAG:EligibilityChecker
+TAG:SystemLPSourceImpl
+TAG:HardKeyTracker
+TAG:LPRequestState
+TAG:AsrProviderSelector
+TAG:m55.qkd
+TAG:LPDownloadSettingsState
+TAG:DefaultLPManager
+TAG:KeyboardInsetsController
+TAG:SbgChecker
+TAG:ModelManagerImpl
+TAG:LanguagePackConfigImpl
+TAG:BaseKeyboardSizeHelper
+TAG:ImeTracker
+TAG:AndroidIME
+TAG:GoogleInputMethodService
+TAG:AiAiSuggestUi
+TAG:EligibilityUtilKt
+TAG:GlobeKeyExtension
+TAG:NotificationCenter
+TAG:NGSA.GoogleAsrService
+TAG:NgaExtension
+TAG:SpeechEnhancementLogger
+TAG:NgaVoiceInputHandlerSwitcher
+TAG:NgaDataShareClient
+TAG:Module
+TAG:KeyboardWrapper
+TAG:KeyboardModeUtils
+TAG:KeyboardEventHandler
+TAG:PackageStatusChecker
+TAG:NgaVoiceInputHandler
+TAG:NgaInputHandlerFactory
+TAG:KeyboardUiManagerImpl
+TAG:KeyboardEligibilityNotifier
+TAG:AsrProviderChoice
+TAG:NewLanguagePromptExtension
+TAG:InputBundle
+TAG:VoiceImeExtension
+TAG:SupplementaryKeyboardsWrapper
+TAG:SmartEdit
+TAG:PkModeUpdater
+TAG:NormalModeController
+TAG:NgaInputManager
+TAG:ModelessCommandDetector
+TAG:LatinIme
+TAG:KeyboardManager
+TAG:KeyboardHeightUtil
+TAG:Keyboard
+TAG:Interaction
+TAG:ExtensionWrapper
+TAG:DataShareHelper
+TAG:AutoCloseableReference
+TAG:AccessoryInputModeManager
+TAG:KeyboardViewHelper
+TAG:KeyboardInsetsHandler
+TAG:KeyboardActiveSessionStreamManager
+TAG:InteractionManager
+TAG:StylusModule
+TAG:DictationHelper
+TAG:InputContextChangeTracker
+TAG:ContactPromoExtension
+TAG:SystemHapticSettings
+
+
+# ============================
+# Hardware / Display / Graphics
+# ============================
+
+TAG:hwc-display
+TAG:gralloc5
+TAG:DisplayDeviceRepository
+
+
+# ============================
+# Touch / Gesture handling
+# ============================
+
+TAG:deeptouch
+TAG:twoshay.grippalm
+TAG:twoshay.TouchContextService
+TAG:NavHandleLongPressHandler
+
+
+# ============================
+# System services noise
+# ============================
+
+TAG:powerhal-libperfmgr
+TAG:suez-nanoapp-clients
+TAG:CHRE
+TAG:egcp
+TAG:FontLog
+TAG:binder
+TAG:TasksRepository
+TAG:TransitionChain
+TAG:GamesDndManager
+TAG:OverlaySession
+
+
+# ============================
+# Common noisy system tags
+# ============================
+
+TAG:chatty
+TAG:ViewRootImpl
+TAG:InputMethodManager
+TAG:HwRemoteInputMethodManager
+TAG:ActivityThread
+TAG:InputDispatcher
+
+# Only hide INFO level from these (keep warnings/errors)
+TAGLEVEL:ActivityManager:I
+TAGLEVEL:WindowManager:I
+TAGLEVEL:WindowManager:V
+
+
+# ============================
+# Play Services / Google
+# ============================
+
+TAG:PlayCore
+TAG:PlayCloudSearchServiceI
+TAG:PlayCloudSearchChimeraS
+TAG:PlayCloudSearchLifeCycl
+TAG:PlayGamesServices[DataBroker]
+TAG:GmsNetworkEngineImageFe
+TAG:libbinder.IPCThreadState
+TAG:libbinder.BpBinder
+TAG:libbinder.Binder
+
+# Generic AlarmManager/Job noise
+TAG:JobServiceContext
+TAG:JobScheduler
+TAG:JobInfo
+TAG:WM-WorkerWrapper
+
+# Job scheduling patterns
+PATTERN:Job didn't exist in JobStore
+PATTERN:Sending onNetworkChanged for a job that isn't started
+PATTERN:has a deadline with no functional constraints
+
+
+# ============================
+# ART / GC patterns
+# ============================
+
+PATTERN:^(Concurrent|Background|Explicit) (young|partial|sticky|full) (GC|concurrent)
+LINEPATTERN:.*\bART\b.*\b(GC|alloc|free)\b.*
+
+
+# ============================
+# High-volume radio / network
+# ============================
+
+TAG:bthal.activity
+TAG:WifiHAL
+TAG:WifiService
+TAG:NearbyDiscovery
+TAG:NearbyMediums
+TAG:EuiccGoogle
+TAG:sensor-suez
+TAG:pixel-thermal
+TAG:SHANNON_IMS
+TAG:cn_CronetUrlRequestContext
+
+
+# ============================
+# Smartspace / weather / UI chrome
+# ============================
+
+TAG:AiAiEcho
+TAG:AiAiSmartspace
+TAG:AmbientCueRepository
+TAG:WeatherSmartspaceView
+TAG:WeatherData
+TAG:SsPagerDots
+TAG:SsBaseTemplateCard
+
+# ============================
+# my custom ignores
+# ============================
+TAG:Finsky
+
+
+# ============================
+# Zygote / process creation noise
+# ============================
+
+# Hide the "Using CollectorTypeCMC GC" line but keep other app logs
+PATTERN:Using CollectorTypeCMC GC
+PATTERN:Failed to find entry 'classes\.dex'
+
+
+# ============================
+# Common permission/config warnings (not errors)
+# ============================
+
+PATTERN:avc:.*denied.*scontext=u:r:hal_graphics_composer
+PATTERN:App-specific configuration not found for packageName
+PATTERN:Pinning is deprecated since Android Q
+
+
+# ============================
+# Third-party apps on your device
+# ============================
+
+PATTERN:com.jrustonapps.myauroraforecast
+PATTERN:com.linkedin.android
+PATTERN:com.reddit.frontpage
+PATTERN:com.chamberlain.android.liftmaster.myq
+PATTERN:com.lowlaglabs.sdk.data.task.NoOpJobService
+
+
+# ============================
+# Misc one-off noise
+# ============================
+
+PATTERN:Error unit test
+PATTERN:Binder transaction to android.accounts.IAccountAuthenticator

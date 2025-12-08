@@ -57,6 +57,14 @@ dependencies:
   
   # Logging & Analytics
   logger: ^2.0.2+1
+  
+  # Background Tasks
+  # Using android_alarm_manager_plus instead of workmanager due to compatibility
+  android_alarm_manager_plus: ^4.0.1
+  flutter_local_notifications: ^17.0.0
+  
+  # Connectivity
+  connectivity_plus: ^5.0.2
 
 dev_dependencies:
   flutter_test:
@@ -101,4 +109,4 @@ flutter_launcher_icons:
   image_path: "assets/images/icon.png"
   adaptive_icon_background: "#2D6B3E"  # Your app's primary green
   adaptive_icon_foreground: "assets/images/icon.png"
-  min_sdk_android: 21
+  min_sdk_android: 30

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +12,7 @@ class CaptureRepository {
   final SupabaseClient _supabase;
   final LocationService _locationService;
   final SharedPreferences _prefs;
+  final Logger _logger;
   static const _draftKey = 'capture_draft';
   static const _uuid = Uuid();
 
@@ -19,22 +21,36 @@ class CaptureRepository {
     required LocationService locationService,
     required StorageService storageService,
     required SharedPreferences prefs,
+    required Logger logger,
   })  : _supabase = supabase,
         _locationService = locationService,
-        _prefs = prefs;
+        _prefs = prefs,
+        _logger = logger;
 
   /// Get all available tags from the database
   Future<List<Tag>> getTags() async {
     try {
+      _logger.d('getTags: starting request');
+      _logger.d('getTags: auth session exists: ${_supabase.auth.currentSession != null}');
+
       final response = await _supabase
           .from('tags')
           .select()
           .order('name', ascending: true);
-      
-      return (response as List)
+
+      final tags = (response as List)
           .map((json) => Tag.fromJson(json as Map<String, dynamic>))
           .toList();
+      _logger.d('getTags: success, got ${tags.length} tags');
+      return tags;
+    } on AuthException catch (e) {
+      _logger.e('getTags: AuthException - ${e.message}, statusCode=${e.statusCode}');
+      throw Exception('Failed to load tags (auth error): $e');
+    } on SocketException catch (e) {
+      _logger.e('getTags: SocketException (network) - ${e.message}');
+      throw Exception('Failed to load tags (network error): $e');
     } catch (e) {
+      _logger.e('getTags: ${e.runtimeType} - $e');
       throw Exception('Failed to load tags: $e');
     }
   }

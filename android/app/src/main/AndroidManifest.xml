@@ -9,6 +9,11 @@
     
     <!-- Camera permission for taking photos -->
     <uses-permission android:name="android.permission.CAMERA" />
+    
+    <!-- For background work -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <application
         android:label="Lost &amp; Tossed"

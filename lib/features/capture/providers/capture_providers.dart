@@ -45,12 +45,14 @@ final captureRepositoryProvider = Provider<CaptureRepository>((ref) {
   final locationService = ref.watch(locationServiceProvider);
   final storageService = ref.watch(storageServiceProvider);
   final prefs = ref.watch(sharedPreferencesProvider);
-  
+  final logger = ref.watch(loggerProvider);
+
   return CaptureRepository(
     supabase: supabase,
     locationService: locationService,
     storageService: storageService,
     prefs: prefs,
+    logger: logger,
   );
 });
 

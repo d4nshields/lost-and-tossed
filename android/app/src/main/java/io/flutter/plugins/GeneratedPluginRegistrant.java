@@ -16,9 +16,24 @@ public final class GeneratedPluginRegistrant {
   private static final String TAG = "GeneratedPluginRegistrant";
   public static void registerWith(@NonNull FlutterEngine flutterEngine) {
     try {
+      flutterEngine.getPlugins().add(new dev.fluttercommunity.plus.androidalarmmanager.AndroidAlarmManagerPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin android_alarm_manager_plus, dev.fluttercommunity.plus.androidalarmmanager.AndroidAlarmManagerPlugin", e);
+    }
+    try {
       flutterEngine.getPlugins().add(new com.llfbandit.app_links.AppLinksPlugin());
     } catch (Exception e) {
       Log.e(TAG, "Error registering plugin app_links, com.llfbandit.app_links.AppLinksPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new dev.fluttercommunity.plus.connectivity.ConnectivityPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin connectivity_plus, dev.fluttercommunity.plus.connectivity.ConnectivityPlugin", e);
+    }
+    try {
+      flutterEngine.getPlugins().add(new com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin());
+    } catch (Exception e) {
+      Log.e(TAG, "Error registering plugin flutter_local_notifications, com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin", e);
     }
     try {
       flutterEngine.getPlugins().add(new io.flutter.plugins.flutter_plugin_android_lifecycle.FlutterAndroidLifecyclePlugin());
