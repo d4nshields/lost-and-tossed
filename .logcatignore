@@ -13,7 +13,7 @@
 
 # Ignore verbose and debug logs by default
 LEVEL:V
-# LEVEL:D
+LEVEL:D
 
 
 # ============================
@@ -191,6 +191,10 @@ TAG:sensor-suez
 TAG:pixel-thermal
 TAG:SHANNON_IMS
 TAG:cn_CronetUrlRequestContext
+TAG:LauncherStateManager
+TAG:Trusty
+TAG:Lyric
+
 
 
 # ============================
@@ -209,6 +213,11 @@ TAG:SsBaseTemplateCard
 # my custom ignores
 # ============================
 TAG:Finsky
+TAG:Wildlife
+TAG:AppInitScheduler
+TAG:MultiDex
+TAG:Inet
+TAG:NearbySharing
 
 
 # ============================

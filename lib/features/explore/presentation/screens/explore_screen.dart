@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../presentation/theme/cozy_theme.dart';
+import '../../../../shared/models/submission_models.dart';
 import '../../../auth/providers/auth_providers.dart';
+import '../../providers/feed_providers.dart';
 
 /// Explore screen showing map and feed views
 class ExploreScreen extends ConsumerStatefulWidget {
@@ -209,124 +212,263 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
 
   Widget _buildFeedView(BuildContext context) {
     final theme = Theme.of(context);
-    
+    final feedState = ref.watch(feedProvider);
+
+    // Show loading state
+    if (feedState.isLoading && feedState.submissions.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // Show error state
+    if (feedState.error != null && feedState.submissions.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: theme.colorScheme.error,
+            ),
+            const SizedBox(height: LostTossedCozyTheme.spaceMd),
+            Text(
+              'Failed to load feed',
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: LostTossedCozyTheme.spaceSm),
+            Text(
+              feedState.error!,
+              style: theme.textTheme.bodySmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: LostTossedCozyTheme.spaceMd),
+            ElevatedButton(
+              onPressed: () => ref.read(feedProvider.notifier).loadSubmissions(),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Show empty state
+    if (feedState.submissions.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.inbox_outlined,
+              size: 64,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: LostTossedCozyTheme.spaceMd),
+            Text(
+              'No finds yet',
+              style: theme.textTheme.titleMedium,
+            ),
+            const SizedBox(height: LostTossedCozyTheme.spaceSm),
+            Text(
+              'Be the first to document something!',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return RefreshIndicator(
-      onRefresh: () async {
-        // Refresh feed
-        await Future.delayed(const Duration(seconds: 1));
-      },
+      onRefresh: () => ref.read(feedProvider.notifier).refresh(),
       child: ListView.builder(
         padding: const EdgeInsets.all(LostTossedCozyTheme.spaceMd),
-        itemCount: 10, // Placeholder count
+        itemCount: feedState.submissions.length + (feedState.hasMore ? 1 : 0),
         itemBuilder: (context, index) {
-          return Card(
-            margin: const EdgeInsets.only(bottom: LostTossedCozyTheme.spaceMd),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Image placeholder
-                Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceVariant,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(LostTossedCozyTheme.radiusMd),
-                    ),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.image_outlined,
-                      size: 48,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
-                
-                // Content
-                Padding(
-                  padding: const EdgeInsets.all(LostTossedCozyTheme.spaceMd),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Category chip
-                      Chip(
-                        label: Text(_getCategoryForIndex(index)),
-                        labelStyle: theme.textTheme.labelSmall,
-                        padding: EdgeInsets.zero,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      
-                      const SizedBox(height: LostTossedCozyTheme.spaceSm),
-                      
-                      // Caption with micro-copy style
-                      Text(
-                        _getMicroCopyForIndex(index),
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                      
-                      const SizedBox(height: LostTossedCozyTheme.spaceSm),
-                      
-                      // Metadata
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_outlined,
-                            size: 16,
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '~150m away',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                          const SizedBox(width: LostTossedCozyTheme.spaceMd),
-                          Icon(
-                            Icons.access_time,
-                            size: 16,
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '2 hours ago',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
+          // Load more trigger
+          if (index >= feedState.submissions.length) {
+            // Trigger load more when reaching the end
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ref.read(feedProvider.notifier).loadMore();
+            });
+            return const Padding(
+              padding: EdgeInsets.all(LostTossedCozyTheme.spaceMd),
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          final submission = feedState.submissions[index];
+          return _buildSubmissionCard(context, submission);
         },
       ),
     );
   }
 
-  String _getCategoryForIndex(int index) {
-    final categories = ['Lost', 'Tossed', 'Posted', 'Marked', 'Curious', 'Traces'];
-    return categories[index % categories.length];
+  Widget _buildSubmissionCard(BuildContext context, Submission submission) {
+    final theme = Theme.of(context);
+    final imageUrl = submission.imageUrls.displayUrl;
+    final timeAgo = _formatTimeAgo(submission.createdAt);
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: LostTossedCozyTheme.spaceMd),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image
+          if (imageUrl.isNotEmpty)
+            SizedBox(
+              height: 200,
+              width: double.infinity,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: theme.colorScheme.surfaceVariant,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: theme.colorScheme.surfaceVariant,
+                  child: Center(
+                    child: Icon(
+                      Icons.broken_image_outlined,
+                      size: 48,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          else
+            Container(
+              height: 200,
+              color: theme.colorScheme.surfaceVariant,
+              child: Center(
+                child: Icon(
+                  Icons.image_outlined,
+                  size: 48,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(LostTossedCozyTheme.spaceMd),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Category chip with emoji
+                Chip(
+                  avatar: Text(submission.category.emoji),
+                  label: Text(submission.category.displayName),
+                  labelStyle: theme.textTheme.labelSmall,
+                  padding: EdgeInsets.zero,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+
+                const SizedBox(height: LostTossedCozyTheme.spaceSm),
+
+                // Caption or micro-copy
+                Text(
+                  submission.caption?.isNotEmpty == true
+                      ? submission.caption!
+                      : submission.category.microCopy,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontStyle: submission.caption?.isNotEmpty == true
+                        ? FontStyle.normal
+                        : FontStyle.italic,
+                  ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                ),
+
+                const SizedBox(height: LostTossedCozyTheme.spaceSm),
+
+                // Tags
+                if (submission.tags != null && submission.tags!.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: LostTossedCozyTheme.spaceSm),
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: submission.tags!.take(5).map((tag) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceVariant,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '#$tag',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+
+                // Metadata row
+                Row(
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      size: 16,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      timeAgo,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    if (submission.disposed == true) ...[
+                      const SizedBox(width: LostTossedCozyTheme.spaceMd),
+                      Icon(
+                        Icons.check_circle_outline,
+                        size: 16,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Disposed',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  String _getMicroCopyForIndex(int index) {
-    final microCopies = [
-      'A glove begins its solo adventure',
-      'The snack that left only a clue',
-      'Poster\'s still here, but the event is long gone',
-      'Someone marked their territory with chalk',
-      'A curious arrangement of bottle caps',
-      'Footprints in fresh snow, heading nowhere',
-      'Keys waiting for their owner\'s return',
-      'Yesterday\'s news, literally',
-      'A sticker\'s shadow remains after removal',
-      'Tire tracks telling a story of haste',
-    ];
-    return microCopies[index % microCopies.length];
+  String _formatTimeAgo(DateTime? dateTime) {
+    if (dateTime == null) return 'Unknown';
+
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays}d ago';
+    } else {
+      return '${(difference.inDays / 7).floor()}w ago';
+    }
   }
 }
