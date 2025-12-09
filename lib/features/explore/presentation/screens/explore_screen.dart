@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../presentation/theme/cozy_theme.dart';
 import '../../../../shared/models/submission_models.dart';
@@ -14,7 +15,7 @@ class ExploreScreen extends ConsumerStatefulWidget {
   ConsumerState<ExploreScreen> createState() => _ExploreScreenState();
 }
 
-class _ExploreScreenState extends ConsumerState<ExploreScreen> 
+class _ExploreScreenState extends ConsumerState<ExploreScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -22,6 +23,23 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Check for tab query parameter (e.g., from capture submission)
+    // Wrapped in try-catch for tests that don't use GoRouter
+    try {
+      final queryParams = GoRouterState.of(context).uri.queryParameters;
+      if (queryParams['tab'] == 'feed') {
+        // Switch to feed tab and refresh
+        _tabController.animateTo(1);
+        ref.read(feedProvider.notifier).refresh();
+      }
+    } catch (_) {
+      // GoRouter not available (e.g., in tests)
+    }
   }
 
   @override
