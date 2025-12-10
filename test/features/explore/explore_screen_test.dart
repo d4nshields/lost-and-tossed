@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as supabase;
 import 'package:lost_and_tossed/features/explore/presentation/screens/explore_screen.dart';
+import 'package:lost_and_tossed/features/explore/providers/feed_providers.dart';
 import 'package:lost_and_tossed/features/auth/providers/auth_providers.dart';
 import 'package:lost_and_tossed/features/auth/data/auth_repository.dart';
 
@@ -14,30 +15,44 @@ class MockSupabaseClient extends Mock implements supabase.SupabaseClient {}
 class MockSupabaseAuth extends Mock implements supabase.GoTrueClient {}
 class MockUser extends Mock implements supabase.User {}
 class MockAuthState extends Mock implements supabase.AuthState {}
+class MockFeedNotifier extends StateNotifier<FeedState> implements FeedNotifier {
+  MockFeedNotifier() : super(const FeedState());
+
+  @override
+  Future<void> loadSubmissions() async {}
+
+  @override
+  Future<void> refresh() async {}
+
+  @override
+  Future<void> loadMore() async {}
+}
 
 void main() {
   group('Explore Screen Tests', () {
     late MockAuthRepository mockAuthRepository;
     late MockSupabaseClient mockSupabaseClient;
     late MockSupabaseAuth mockSupabaseAuth;
+    late MockFeedNotifier mockFeedNotifier;
     late StreamController<supabase.AuthState> authStateController;
-    
+
     setUp(() {
       mockAuthRepository = MockAuthRepository();
       mockSupabaseClient = MockSupabaseClient();
       mockSupabaseAuth = MockSupabaseAuth();
-      
+      mockFeedNotifier = MockFeedNotifier();
+
       // Create a stream controller for auth state changes
       authStateController = StreamController<supabase.AuthState>.broadcast();
-      
+
       // Set up the auth state stream
       when(() => mockAuthRepository.authStateChanges).thenAnswer((_) => authStateController.stream);
       when(() => mockAuthRepository.currentUser).thenReturn(null);
-      
+
       when(() => mockSupabaseClient.auth).thenReturn(mockSupabaseAuth);
       when(() => mockSupabaseAuth.currentUser).thenReturn(null);
     });
-    
+
     tearDown(() {
       authStateController.close();
     });
@@ -47,15 +62,16 @@ void main() {
         ProviderScope(
           overrides: [
             authRepositoryProvider.overrideWithValue(mockAuthRepository),
+            feedProvider.overrideWith((ref) => mockFeedNotifier),
           ],
           child: const MaterialApp(
             home: ExploreScreen(),
           ),
         ),
       );
-      
+
       await tester.pumpAndSettle();
-      
+
       // The new structure has a TabBar in the AppBar
       expect(find.text('Lost & Tossed'), findsOneWidget);
       expect(find.byType(TabBar), findsOneWidget);
@@ -68,15 +84,16 @@ void main() {
         ProviderScope(
           overrides: [
             authRepositoryProvider.overrideWithValue(mockAuthRepository),
+            feedProvider.overrideWith((ref) => mockFeedNotifier),
           ],
           child: const MaterialApp(
             home: ExploreScreen(),
           ),
         ),
       );
-      
+
       await tester.pumpAndSettle();
-      
+
       // Filter chips are in the Map view (first tab)
       expect(find.byType(FilterChip), findsWidgets);
       expect(find.text('Lost'), findsOneWidget);
@@ -89,27 +106,28 @@ void main() {
         ProviderScope(
           overrides: [
             authRepositoryProvider.overrideWithValue(mockAuthRepository),
+            feedProvider.overrideWith((ref) => mockFeedNotifier),
           ],
           child: const MaterialApp(
             home: ExploreScreen(),
           ),
         ),
       );
-      
+
       await tester.pumpAndSettle();
-      
+
       // Should have TabBarView with two tabs
       expect(find.byType(TabBarView), findsOneWidget);
-      
+
       // Map view is visible by default
       expect(find.text('Map View'), findsOneWidget);
-      
+
       // Switch to Feed tab
       await tester.tap(find.text('Feed'));
       await tester.pumpAndSettle();
-      
-      // Feed view should now be visible
-      expect(find.byType(RefreshIndicator), findsOneWidget);
+
+      // Feed view shows empty state with mocked empty submissions
+      expect(find.text('No finds yet'), findsOneWidget);
     });
 
     testWidgets('should handle category chip selection', (WidgetTester tester) async {
@@ -117,27 +135,28 @@ void main() {
         ProviderScope(
           overrides: [
             authRepositoryProvider.overrideWithValue(mockAuthRepository),
+            feedProvider.overrideWith((ref) => mockFeedNotifier),
           ],
           child: const MaterialApp(
             home: ExploreScreen(),
           ),
         ),
       );
-      
+
       await tester.pumpAndSettle();
-      
+
       // Find a filter chip that's not selected
       final tossedChip = find.ancestor(
         of: find.text('Tossed'),
         matching: find.byType(FilterChip),
       );
-      
+
       expect(tossedChip, findsOneWidget);
-      
+
       // Tap it (though it won't do anything yet as functionality isn't implemented)
       await tester.tap(tossedChip);
       await tester.pumpAndSettle();
-      
+
       // Test passes if no errors occur
     });
 
@@ -147,15 +166,16 @@ void main() {
           ProviderScope(
             overrides: [
               authRepositoryProvider.overrideWithValue(mockAuthRepository),
+              feedProvider.overrideWith((ref) => mockFeedNotifier),
             ],
             child: const MaterialApp(
               home: ExploreScreen(),
             ),
           ),
         );
-        
+
         await tester.pumpAndSettle();
-        
+
         // Just verify it renders without errors
         expect(find.byType(ExploreScreen), findsOneWidget);
       });

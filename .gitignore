@@ -29,6 +29,10 @@ Thumbs.db
 *.freezed.dart
 /lib/generated/
 
+# Flutter plugin cache
+.flutter-plugins
+.flutter-plugins-dependencies
+
 # Coverage
 coverage/
 

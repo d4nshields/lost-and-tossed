@@ -6,23 +6,39 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:lost_and_tossed/core/router/app_router.dart';
 import 'package:lost_and_tossed/features/auth/providers/auth_providers.dart';
 import 'package:lost_and_tossed/features/auth/data/auth_repository.dart';
+import 'package:lost_and_tossed/features/explore/providers/feed_providers.dart';
 
 // Mock classes
 class MockAuthRepository extends Mock implements AuthRepository {}
 class MockSupabaseClient extends Mock implements SupabaseClient {}
 class MockUser extends Mock implements User {}
+class MockFeedNotifier extends StateNotifier<FeedState> implements FeedNotifier {
+  MockFeedNotifier() : super(const FeedState());
+
+  @override
+  Future<void> loadSubmissions() async {}
+
+  @override
+  Future<void> refresh() async {}
+
+  @override
+  Future<void> loadMore() async {}
+}
 
 void main() {
   group('Auth Redirect Tests', () {
     late MockAuthRepository mockAuthRepository;
+    late MockFeedNotifier mockFeedNotifier;
     late ProviderContainer container;
 
     setUp(() {
       mockAuthRepository = MockAuthRepository();
-      
+      mockFeedNotifier = MockFeedNotifier();
+
       container = ProviderContainer(
         overrides: [
           authRepositoryProvider.overrideWithValue(mockAuthRepository),
+          feedProvider.overrideWith((ref) => mockFeedNotifier),
         ],
       );
     });

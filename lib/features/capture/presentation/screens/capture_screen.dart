@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../../../../presentation/theme/cozy_theme.dart';
@@ -703,7 +704,7 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> with WidgetsBindi
   Future<void> _submitFind() async {
     try {
       await ref.read(captureNotifierProvider.notifier).submit();
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -711,10 +712,13 @@ class _CaptureScreenState extends ConsumerState<CaptureScreen> with WidgetsBindi
             behavior: SnackBarBehavior.floating,
           ),
         );
-        // Clear the form for next capture instead of navigating away
+        // Clear the form
         ref.read(captureNotifierProvider.notifier).clear();
         _captionController.clear();
         _tagController.clear();
+
+        // Navigate to feed to show the new submission
+        context.go('/explore?tab=feed');
       }
     } catch (e) {
       if (mounted) {
