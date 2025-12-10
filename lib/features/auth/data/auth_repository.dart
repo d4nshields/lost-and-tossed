@@ -17,8 +17,12 @@ class AuthRepository {
               scopes: ['email', 'profile'],
               // Web Client ID for lostandtossed project
               clientId: kIsWeb
-                ? '1038604734243-hs11li9t6lni3hvir0u1gi4nr4n4nns7.apps.googleusercontent.com'
-                : null, // On Android, it uses the Android OAuth client
+                  ? '1038604734243-hs11li9t6lni3hvir0u1gi4nr4n4nns7.apps.googleusercontent.com'
+                  : null,
+              // Explicitly set serverClientId to ensure correct ID token audience on Android
+              // This is required because both puzzlenook and lost-and-tossed share the same GCP project
+              serverClientId:
+                  '1038604734243-hs11li9t6lni3hvir0u1gi4nr4n4nns7.apps.googleusercontent.com',
             );
 
   /// Get current user
