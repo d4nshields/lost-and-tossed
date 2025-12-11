@@ -66,6 +66,9 @@ dependencies:
   # Connectivity
   connectivity_plus: ^5.0.2
 
+  # In-App Updates
+  in_app_update: ^4.2.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
