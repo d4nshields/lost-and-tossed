@@ -30,7 +30,7 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.32.8'
+        flutter-version: '3.47.2'
         channel: 'stable'
         cache: true
         
@@ -60,7 +60,7 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.32.8'
+        flutter-version: '3.47.2'
         channel: 'stable'
         cache: true
         
@@ -195,19 +195,43 @@ jobs:
         echo "📋 Result:"
         grep "^version:" pubspec.yaml
         
+    - name: Generate Android version
+      id: android_version
+      run: |
+        VERSION_CODE=$((1000000000 + ${{ github.run_number }}))
+
+        echo "GitHub workflow run: ${{ github.run_number }}"
+        echo "Android version code: $VERSION_CODE"
+        echo "Version name: ${{ steps.version.outputs.VERSION_NAME }}"
+
+        if [ "$VERSION_CODE" -le 916202746 ]; then
+          echo "ERROR: versionCode must exceed previous Play Store maximum"
+          exit 1
+        fi
+
+        if [ "$VERSION_CODE" -gt 2100000000 ]; then
+          echo "ERROR: versionCode exceeds Google Play maximum"
+          exit 1
+        fi
+
+        echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+
     - name: Build App Bundle
       run: |
         echo "🏭 Starting build process..."
-        
-        # Build with verbose output to see signing details
-        flutter build appbundle --release --verbose 2>&1 | tee build.log
-        
-        # Extract signing info from build log
+        echo "Version name: ${{ steps.version.outputs.VERSION_NAME }}"
+        echo "Version code: ${{ steps.android_version.outputs.VERSION_CODE }}"
+
+        flutter build appbundle \
+          --release \
+          --build-name="${{ steps.version.outputs.VERSION_NAME }}" \
+          --build-number="${{ steps.android_version.outputs.VERSION_CODE }}" \
+          --verbose 2>&1 | tee build.log
+
         echo ""
         echo "🔍 Checking build signing configuration:"
         grep -i "signingConfig\|keystore\|SHA" build.log | tail -20 || true
-        
-        # Verify the built AAB
+
         echo ""
         echo "📦 Verifying built AAB:"
         if [ -f build/app/outputs/bundle/release/app-release.aab ]; then

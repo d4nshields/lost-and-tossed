@@ -31,7 +31,9 @@ android {
         applicationId = "com.tinkerplexlabs.lost_and_tossed"
         minSdkVersion = 30  // Android 11+ for permission-free Photo Picker
         targetSdk = 36
-        
+    
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
     }
 
     // Configure signing for release builds
