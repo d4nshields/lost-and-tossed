@@ -30,7 +30,7 @@ android {
     defaultConfig {
         applicationId = "com.tinkerplexlabs.lost_and_tossed"
         minSdkVersion = 30  // Android 11+ for permission-free Photo Picker
-        targetSdk = 35
+        targetSdk = 36
         
         // Version from pubspec.yaml or overridden by CI/CD
         versionCode = flutter.versionCode ?: 1
