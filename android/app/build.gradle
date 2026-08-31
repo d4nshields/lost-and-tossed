@@ -32,9 +32,6 @@ android {
         minSdkVersion = 30  // Android 11+ for permission-free Photo Picker
         targetSdk = 36
         
-        // Version from pubspec.yaml or overridden by CI/CD
-        versionCode = flutter.versionCode ?: 1
-        versionName = flutter.versionName ?: "1.0.0"
     }
 
     // Configure signing for release builds
