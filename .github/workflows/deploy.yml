@@ -179,7 +179,7 @@ jobs:
         echo "📦 Version name: ${{ steps.version.outputs.VERSION_NAME }}"
 
         # Sanity checks
-        if [ "$VERSION_CODE" -le 916202746 ]; then
+        if [ "$VERSION_CODE" -le 2100000000 ]; then
           echo "ERROR: versionCode must exceed previous Play Store maximum (916202746)"
           exit 1
         fi
@@ -198,7 +198,7 @@ jobs:
     - name: Generate Android version
       id: android_version
       run: |
-        VERSION_CODE=$((1000000000 + ${{ github.run_number }}))
+        VERSION_CODE=$((1300000000 + ${{ github.run_number }}))
 
         echo "GitHub workflow run: ${{ github.run_number }}"
         echo "Android version code: $VERSION_CODE"
