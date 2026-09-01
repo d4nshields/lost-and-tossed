@@ -172,7 +172,7 @@ jobs:
       run: |
         # Reserve the 1-billion range for CI-generated builds.
         # github.run_number increases with each new workflow run.
-        VERSION_CODE=$((1000000000 + ${{ github.run_number }}))
+        VERSION_CODE=$((1300000000 + ${{ github.run_number }}))
 
         echo "🔢 GitHub workflow run: ${{ github.run_number }}"
         echo "🔢 Android version code: $VERSION_CODE"
