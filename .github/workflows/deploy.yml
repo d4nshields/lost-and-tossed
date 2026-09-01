@@ -170,17 +170,16 @@ jobs:
         
     - name: Update version in files
       run: |
-        # Reserve the 1-billion range for CI-generated builds.
-        # github.run_number increases with each new workflow run.
+        # Updated base offset to 1.3 Billion to outpace historic builds
         VERSION_CODE=$((1300000000 + ${{ github.run_number }}))
 
         echo "🔢 GitHub workflow run: ${{ github.run_number }}"
         echo "🔢 Android version code: $VERSION_CODE"
         echo "📦 Version name: ${{ steps.version.outputs.VERSION_NAME }}"
 
-        # Sanity checks
-        if [ "$VERSION_CODE" -le 2100000000 ]; then
-          echo "ERROR: versionCode must exceed previous Play Store maximum (916202746)"
+        # Sanity checks updated to reflect the new minimum boundaries
+        if [ "$VERSION_CODE" -le 1211022949 ]; then
+          echo "ERROR: versionCode must exceed previous Play Store maximum (1211022949)"
           exit 1
         fi
 
@@ -189,22 +188,19 @@ jobs:
           exit 1
         fi
 
-        # Flutter obtains versionCode/versionName from pubspec.yaml
         sed -i "s/^version:.*/version: ${{ steps.version.outputs.VERSION_NAME }}+${VERSION_CODE}/" pubspec.yaml
 
-        echo "📋 Result:"
-        grep "^version:" pubspec.yaml
-        
     - name: Generate Android version
       id: android_version
       run: |
+        # Updated base offset to 1.3 Billion here as well
         VERSION_CODE=$((1300000000 + ${{ github.run_number }}))
 
         echo "GitHub workflow run: ${{ github.run_number }}"
         echo "Android version code: $VERSION_CODE"
         echo "Version name: ${{ steps.version.outputs.VERSION_NAME }}"
 
-        if [ "$VERSION_CODE" -le 916202746 ]; then
+        if [ "$VERSION_CODE" -le 1211022949 ]; then
           echo "ERROR: versionCode must exceed previous Play Store maximum"
           exit 1
         fi
