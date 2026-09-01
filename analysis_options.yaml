@@ -5,12 +5,12 @@ analyzer:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
     - "lib/generated/**"
+    - build/**
+    - android/**
+    - ios/**
   
   errors:
     invalid_annotation_target: ignore
-  
-  plugins:
-    - custom_lint
 
 linter:
   rules:

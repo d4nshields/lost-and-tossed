@@ -30,7 +30,7 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.32.8'
+        flutter-version: '3.47.2'
         channel: 'stable'
         cache: true
         
@@ -60,7 +60,7 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.32.8'
+        flutter-version: '3.47.2'
         channel: 'stable'
         cache: true
         
@@ -170,59 +170,64 @@ jobs:
         
     - name: Update version in files
       run: |
-        # Generate timestamp-based version code
-        # Format: YMMDDHHMMSS where Y = years since 2025
-        # This ensures unique version codes for each build
-        
-        CURRENT_YEAR=$(date -u +"%Y")
-        BASE_YEAR=2025
-        YEAR_OFFSET=$((CURRENT_YEAR - BASE_YEAR))
-        
-        # Format: YMMDDHHMMSS (11 digits max, well under Android's 2100000000 limit)
-        # Using seconds for granularity to ensure uniqueness
-        TIMESTAMP_PART=$(date -u +"%m%d%H%M%S")
-        VERSION_CODE=$(printf "%d%s" $YEAR_OFFSET $TIMESTAMP_PART)
-        
-        # Ensure it's a valid integer (remove any leading zeros)
-        VERSION_CODE=$((10#$VERSION_CODE))
-        
-        echo "🔢 Using timestamp-based version code: $VERSION_CODE"
-        echo "   Year: $(date -u +"%Y"), Base Year: $BASE_YEAR, Year Offset: $YEAR_OFFSET"
-        echo "   UTC Time: $(date -u +'%Y-%m-%d %H:%M:%S')"
-        echo "   Format: ${YEAR_OFFSET}${TIMESTAMP_PART}"
-        
-        # Update pubspec.yaml
+        # Updated base offset to 1.3 Billion to outpace historic builds
+        VERSION_CODE=$((1300000000 + ${{ github.run_number }}))
+
+        echo "🔢 GitHub workflow run: ${{ github.run_number }}"
+        echo "🔢 Android version code: $VERSION_CODE"
+        echo "📦 Version name: ${{ steps.version.outputs.VERSION_NAME }}"
+
+        # Sanity checks updated to reflect the new minimum boundaries
+        if [ "$VERSION_CODE" -le 1211022949 ]; then
+          echo "ERROR: versionCode must exceed previous Play Store maximum (1211022949)"
+          exit 1
+        fi
+
+        if [ "$VERSION_CODE" -gt 2100000000 ]; then
+          echo "ERROR: versionCode exceeds Google Play maximum"
+          exit 1
+        fi
+
         sed -i "s/^version:.*/version: ${{ steps.version.outputs.VERSION_NAME }}+${VERSION_CODE}/" pubspec.yaml
-        
-        # Update build.gradle - handle both Flutter-style and hardcoded version codes
-        # First try to update Flutter-style version code
-        sed -i "s/versionCode = flutter.versionCode ?: [0-9]\+/versionCode = ${VERSION_CODE}/" android/app/build.gradle
-        # Also update hardcoded version code format
-        sed -i "s/versionCode = [0-9]\+/versionCode = ${VERSION_CODE}/" android/app/build.gradle
-        
-        # Update version name - handle both Flutter-style and hardcoded
-        sed -i "s/versionName = flutter.versionName ?: \"[^\"]*\"/versionName = \"${{ steps.version.outputs.VERSION_NAME }}\"/" android/app/build.gradle
-        sed -i "s/versionName = \"[^\"]*\"/versionName = \"${{ steps.version.outputs.VERSION_NAME }}\"/" android/app/build.gradle
-        
-        # Verify the changes
-        echo "📋 Updated pubspec.yaml:"
-        grep "^version:" pubspec.yaml
-        echo "📋 Updated build.gradle:"
-        grep -E "versionCode|versionName" android/app/build.gradle
-        
+
+    - name: Generate Android version
+      id: android_version
+      run: |
+        # Updated base offset to 1.3 Billion here as well
+        VERSION_CODE=$((1300000000 + ${{ github.run_number }}))
+
+        echo "GitHub workflow run: ${{ github.run_number }}"
+        echo "Android version code: $VERSION_CODE"
+        echo "Version name: ${{ steps.version.outputs.VERSION_NAME }}"
+
+        if [ "$VERSION_CODE" -le 1211022949 ]; then
+          echo "ERROR: versionCode must exceed previous Play Store maximum"
+          exit 1
+        fi
+
+        if [ "$VERSION_CODE" -gt 2100000000 ]; then
+          echo "ERROR: versionCode exceeds Google Play maximum"
+          exit 1
+        fi
+
+        echo "VERSION_CODE=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+
     - name: Build App Bundle
       run: |
         echo "🏭 Starting build process..."
-        
-        # Build with verbose output to see signing details
-        flutter build appbundle --release --verbose 2>&1 | tee build.log
-        
-        # Extract signing info from build log
+        echo "Version name: ${{ steps.version.outputs.VERSION_NAME }}"
+        echo "Version code: ${{ steps.android_version.outputs.VERSION_CODE }}"
+
+        flutter build appbundle \
+          --release \
+          --build-name="${{ steps.version.outputs.VERSION_NAME }}" \
+          --build-number="${{ steps.android_version.outputs.VERSION_CODE }}" \
+          --verbose 2>&1 | tee build.log
+
         echo ""
         echo "🔍 Checking build signing configuration:"
         grep -i "signingConfig\|keystore\|SHA" build.log | tail -20 || true
-        
-        # Verify the built AAB
+
         echo ""
         echo "📦 Verifying built AAB:"
         if [ -f build/app/outputs/bundle/release/app-release.aab ]; then

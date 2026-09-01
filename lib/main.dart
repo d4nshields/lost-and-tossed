@@ -10,6 +10,7 @@ import 'presentation/theme/cozy_theme.dart';
 import 'core/constants/app_constants.dart';
 import 'shared/widgets/loading_screen.dart';
 import 'features/capture/providers/capture_providers.dart';
+import 'services/app_update_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,11 +30,44 @@ void main() async {
 }
 
 /// Main application widget
-class LostAndTossedApp extends ConsumerWidget {
+class LostAndTossedApp extends ConsumerStatefulWidget {
   const LostAndTossedApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LostAndTossedApp> createState() => _LostAndTossedAppState();
+}
+
+class _LostAndTossedAppState extends ConsumerState<LostAndTossedApp> {
+  bool _hasCheckedForUpdates = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Check for updates after the first frame is rendered
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForUpdates();
+    });
+  }
+
+  /// Check for Google Play In-App Updates (only once per app launch)
+  Future<void> _checkForUpdates() async {
+    if (_hasCheckedForUpdates) {
+      debugPrint('📱 [AppUpdate] Skipping check - already checked on this launch');
+      return;
+    }
+
+    _hasCheckedForUpdates = true;
+
+    try {
+      await AppUpdateService.instance.checkForUpdate();
+    } catch (e) {
+      // Silent failure - don't disrupt user experience
+      debugPrint('Update check failed: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // Watch app initialization
     final appInitAsyncValue = ref.watch(appInitProvider);
 

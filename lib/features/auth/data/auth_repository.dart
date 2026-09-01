@@ -57,7 +57,11 @@ class AuthRepository {
         throw Exception('Failed to get Google authentication tokens');
       }
 
-      // Sign in with Supabase using Google tokens
+      // Sign in with Supabase using Google tokens.
+      // signInWithIdToken is marked @experimental upstream (gotrue), but it is
+      // the only supported path for native Google sign-in. Revisit when it
+      // stabilises.
+      // ignore: experimental_member_use
       final response = await _supabase.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
